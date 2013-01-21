@@ -4,25 +4,70 @@
 		<title>Acquire the Doctor</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+		
+		<!-- custom css -->
 		<link rel="stylesheet" href="css/atd.css" />
+		
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+
+		<!-- custom js -->
+		<script src="js/class.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/atd.js"></script>
 	</head>
 	<body>
 
-		<div data-role="page" id="main" style="background: #000000 url('images/bg.jpg') no-repeat center center;">
+		<div data-role="page" id="main">
 
 			<div data-role="header">
 				<h1>Acquire the Doctor</h1>
 			</div><!-- /header -->
 
 			<div data-role="content">
-				<p>
-					Hello world
-				</p>
+				<div id="gameHolder"></div>
+				<div class="main-buttons">
+					<div class="ui-grid-solo">
+						<div class="ui-block-a">
+							<button type="v" data-theme="b" id="newGame">
+								New Game
+							</button>
+						</div>
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<a data-role="button" data-theme="c" data-rel="dialog" href="#highscores">
+								High Scores
+							</a>
+						</div>
+						<div class="ui-block-b">
+							<a data-role="button" data-theme="c" data-rel="dialog" href="#help">
+								Help
+							</a>
+						</div>
+					</div>
+				</div>
 			</div><!-- /content -->
 
-		</div><!-- /page -->
+		</div><!-- /main page -->
+		
+		<div data-role="page" id="highscores">
+			<div data-role="header">
+				<h1>High Scores</h1>
+			</div>
+			<div data-role="content">
+				High Scores will go here
+			</div>
+		</div>
+		
+		<div data-role="page" id="help">
+			<div data-role="header">
+				<h1>Help</h1>
+			</div>
+			<div data-role="content">
+				Help will go here
+			</div>
+		</div>
 
 	</body>
 </html>

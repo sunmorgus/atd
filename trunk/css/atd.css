@@ -1,0 +1,14 @@
+.ui-page {
+	/*background: url('../images/bg.jpg') no-repeat center center;
+	 background-size: cover;*/
+}
+[data-role=page] {
+	height: 100% !important;
+	position: relative !important;
+}
+.main-buttons {
+	bottom: 0;
+	position: absolute !important;
+	top: auto !important;
+	width: 98%;
+} 
