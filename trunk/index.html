@@ -12,23 +12,38 @@
 		<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 
 		<!-- custom js -->
-		<script src="js/class.js"></script>
-		<script src="js/game.js"></script>
-		<script src="js/atd.js"></script>
+        <script src="js/Utility/GUID.js"></script>
+		<script src="js/Utility/class.js"></script>
+        <script src="js/Utility/JSON2.js"></script>
+        <script src="js/GameObjManager.js"></script>
+		<script src="js/Game.js"></script>
+		<script src="js/Index.js"></script>
 	</head>
 	<body>
 
-		<div data-role="page" id="main">
-
-			<div data-role="header">
-				<h1>Acquire the Doctor</h1>
-			</div><!-- /header -->
-
+		<!-- main page -->
+        
+        <div data-role="page" id="main">
 			<div data-role="content">
 				<div id="gameHolder"></div>
-			</div><!-- /content -->
-
-		</div><!-- /main page -->
+			</div>
+		</div>
+        
+        <!-- /main page -->
+        
+        <!-- dialogs -->
+        
+        <div data-role="page" id="orientation">
+            <div data-role="header">
+                <h1>Notice</h1>
+            </div>
+            <div data-role="content">
+                <p>
+                    Note: This page is best viewed in Landscape orienation on mobile devices.
+                </p>
+                <a href="#main" data-rel="back" data-role="button" data-inline="true" style="float: right;">Ok</a>
+            </div>
+        </div>
 		
 		<div data-role="page" id="highscores">
 			<div data-role="header">
@@ -47,6 +62,24 @@
 				Help will go here
 			</div>
 		</div>
+        
+        <div data-role="page" id="login">
+            <div data-role="header">
+                <h1>Enter Your Name</h1>
+            </div>
+            
+            <div data-role="content" data-theme="d">
+                <span id="error" data-theme="c"></span>
+                <label for="name">Enter your Name:</label>
+                <input id="name" name="name" type="text" />
+                <label for="nameList">or Select A Name Below:</label>
+                <ul id="nameList" data-role="listview" data-inset="true">
+                </ul>
+                <a id="submitName" href="#home" data-role="button" data-rel="back" data-inline="true" data-icon="check">Submit</a>
+            </div>
+        </div>
+        
+        <!-- /dialogs -->
 
 	</body>
 </html>
