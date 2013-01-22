@@ -4,47 +4,47 @@
 		<title>Acquire the Doctor</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-		
+
 		<!-- custom css -->
 		<link rel="stylesheet" href="css/atd.css" />
-		
+
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 
 		<!-- custom js -->
-        <script src="js/Utility/GUID.js"></script>
+		<script src="js/Utility/GUID.js"></script>
 		<script src="js/Utility/class.js"></script>
-        <script src="js/Utility/JSON2.js"></script>
-        <script src="js/GameObjManager.js"></script>
+		<script src="js/Utility/JSON2.js"></script>
+		<script src="js/GameObjManager.js"></script>
 		<script src="js/Game.js"></script>
 		<script src="js/Index.js"></script>
 	</head>
 	<body>
 
 		<!-- main page -->
-        
-        <div data-role="page" id="main">
+
+		<div data-role="page" id="main">
 			<div data-role="content">
 				<div id="gameHolder"></div>
 			</div>
 		</div>
-        
-        <!-- /main page -->
-        
-        <!-- dialogs -->
-        
-        <div data-role="page" id="orientation">
-            <div data-role="header">
-                <h1>Notice</h1>
-            </div>
-            <div data-role="content">
-                <p>
-                    Note: This page is best viewed in Landscape orienation on mobile devices.
-                </p>
-                <a href="#main" data-rel="back" data-role="button" data-inline="true" style="float: right;">Ok</a>
-            </div>
-        </div>
-		
+
+		<!-- /main page -->
+
+		<!-- dialogs -->
+
+		<div data-role="page" id="orientation">
+			<div data-role="header">
+				<h1>Notice</h1>
+			</div>
+			<div data-role="content">
+				<p>
+					Note: This page is best viewed in Landscape orienation on mobile devices.
+				</p>
+				<a href="#main" data-rel="back" data-role="button" data-inline="true" style="float: right;">Ok</a>
+			</div>
+		</div>
+
 		<div data-role="page" id="highscores">
 			<div data-role="header">
 				<h1>High Scores</h1>
@@ -53,7 +53,7 @@
 				High Scores will go here
 			</div>
 		</div>
-		
+
 		<div data-role="page" id="help">
 			<div data-role="header">
 				<h1>Help</h1>
@@ -62,24 +62,23 @@
 				Help will go here
 			</div>
 		</div>
-        
-        <div data-role="page" id="login">
-            <div data-role="header">
-                <h1>Enter Your Name</h1>
-            </div>
-            
-            <div data-role="content" data-theme="d">
-                <span id="error" data-theme="c"></span>
-                <label for="name">Enter your Name:</label>
-                <input id="name" name="name" type="text" />
-                <label for="nameList">or Select A Name Below:</label>
-                <ul id="nameList" data-role="listview" data-inset="true">
-                </ul>
-                <a id="submitName" href="#home" data-role="button" data-rel="back" data-inline="true" data-icon="check">Submit</a>
-            </div>
-        </div>
-        
-        <!-- /dialogs -->
+
+		<div data-role="page" id="login">
+			<div data-role="header">
+				<h1>Enter Your Name</h1>
+			</div>
+
+			<div data-role="content" data-theme="d">
+				<span id="error" data-theme="c"></span>
+				<label for="name">Enter your Name:</label>
+				<input id="name" name="name" type="text" />
+				<label for="nameList">or Select A Name Below:</label>
+				<ul id="nameList" data-role="listview" data-inset="true"></ul>
+				<a id="submitName" href="#home" data-role="button" data-rel="back" data-inline="true" data-icon="check">Submit</a>
+			</div>
+		</div>
+
+		<!-- /dialogs -->
 
 	</body>
 </html>
