@@ -89,7 +89,7 @@ var GameObjManager = Class.extend({
             }
         }
         
-        localStorage['players'] = players;
+        localStorage['players'] = JSON.stringify(players);
     },
     
     GetPlayer: function(name){
