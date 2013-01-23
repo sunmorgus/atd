@@ -1,10 +1,12 @@
 ATD = {};
 ATD.GameObjManager = null;
+ATD.CurrentGame = null;
 //
 //Page Events
 //
 $(document).ready(function() {
 	var gameObjManager = new GameObjManager();
+    var currentGame = new Game(gameObjManager);
 
 	if (gameObjManager.WindowWidth < gameObjManager.WindowHeight) {
 		$.mobile.changePage("#orientation", {
@@ -13,12 +15,13 @@ $(document).ready(function() {
 			reverse : false
 		});
 	} else {
-		gameObjManager.CurrentGame.SetupCanvas();
+		currentGame.SetupCanvas();
 		ATD.GameObjManager = gameObjManager;
+        ATD.CurrentGame = currentGame;
 	}
 });
 $('#game-field').live('tap', function(e) {
-	var button = ATD.GameObjManager.ButtonClick(e.clientX, e.clientY);
+	var button = ATD.CurrentGame.ButtonClick(e.pageX, e.pageY);
 	if (button !== false) {
 		switch(button.id) {
 			case "newGame":
@@ -68,7 +71,9 @@ $('#login').live('pageshow', function(e, data) {
 function SubmitNameTap(name) {
 	var gameObjManager = ATD.GameObjManager;
 	gameObjManager.GetPlayer(name);
-	console.log(gameObjManager.CurrentPlayer);
+	if(typeof gameObjManager.CurrentPlayer.name !== undefined) {
+        ATD.CurrentGame.DrawLevelSelect();
+	}
 	$.mobile.changePage($('#main'));
 }
 
