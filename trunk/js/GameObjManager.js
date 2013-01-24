@@ -1,14 +1,21 @@
 var GameObjManager = Class.extend({
 	init : function() {
+        //Page Objects
 		this.WindowWidth = 800;
-		//window.innerWidth;
 		this.WindowHeight = 480;
-		//window.innerHeight;
-        var buttonsClass = new Buttons();
-		this.Buttons = buttonsClass.GetButtons();
+        this.DefaultFont = "bold 1.5em monospace";
+		
+        //Group Objects
+        this.Group = "index";
+        this.Buttons = []
+        
+        //Player Info
 		this.PlayerVersion = 1;
 		this.Players = localStorage['players'] === undefined || localStorage['players'] === null ? [] : JSON.parse(localStorage['players']);
 		this.CurrentPlayer = {};
+        
+        //Options
+        this.Music = true;
 	},
 
 	//
@@ -31,22 +38,25 @@ var GameObjManager = Class.extend({
 
 	GetPlayer : function(name) {
 		var players = this.Players;
-		var player = this.CurrentPlayer;
+		var player = null;
 		var len = players.length;
-		if (len > 0) {
-			for (var i = 0; i < len; i++) {
-				if (name === players[i].name) {
-					player = players[i];
-				}
+
+		for (var i = 0; i < len; i++) {
+			if (name === players[i].name) {
+				player = players[i];
 			}
-		} else {
-			player = this.NewPlayer(name);
-			players.push(player);
 		}
+        
+        if(player === null){
+            player = this.NewPlayer(name);
+            players.push(player);
+        }
 
 		this.Players = players;
 		this.CurrentPlayer = player;
 		localStorage['players'] = JSON.stringify(players);
+        
+        return player;
 	},
 
 	NewPlayer : function(name) {
@@ -61,7 +71,15 @@ var GameObjManager = Class.extend({
 		}
 
 		return player;
-	}
+	},
+    
+    SetOption: function(option, value){
+        switch(option){
+            case "music":
+                this.Music = value;
+                break;
+        }
+    }
 	//
 	//End Storage Methods
 	//
