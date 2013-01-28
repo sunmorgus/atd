@@ -15,7 +15,7 @@
 		<script src="js/Utility/GUID.js"></script>
 		<script src="js/Utility/class.js"></script>
 		<script src="js/Utility/JSON2.js"></script>
-        <script src="js/Buttons.js"></script>
+		<script src="js/Buttons.js"></script>
 		<script src="js/GameObjManager.js"></script>
 		<script src="js/Game.js"></script>
 		<script src="js/Index.js"></script>
@@ -27,11 +27,15 @@
 		<div data-role="page" id="main">
 			<div data-role="content">
 				<div id="gameHolder" style="width: 800px; margin-left: auto; margin-right: auto;"></div>
-                <div id="nameInput" style="position: fixed; display: none; width: 300px;">
-                    <label for="name" style="font: 1.5em monospace; color: white;">Enter your Name:</label>
-        			<input id="name" name="name" type="text" />
-                    <span style="font: 1.5em monospace; color: white;">or Select a Name Below:</span>
-                </div>
+				<div id="nameInput" style="position: fixed; display: none; width: 300px;">
+					<label for="name" style="font: 1.5em monospace; color: white;">Enter your Name:</label>
+					<input id="name" name="name" type="text" />
+					<span style="font: 1.5em monospace; color: white;">or Select a Name Below:</span>
+				</div>
+				<audio id="theme" autoplay="autoplay">
+					<source src="audio/doctor.mp3" type="audio/mp3">
+					<source src="audio/doctor.wav" type="audio/wav">
+				</audio>
 			</div>
 		</div>
 
@@ -76,7 +80,7 @@
 
 			<div data-role="content" data-theme="d">
 				<span id="error" data-theme="c"></span>
-				
+
 				<label for="nameList">or Select A Name Below:</label>
 				<ul id="nameList" data-role="listview" data-inset="true"></ul>
 				<a id="submitName" href="#home" data-role="button" data-rel="back" data-inline="true" data-icon="check">Submit</a>

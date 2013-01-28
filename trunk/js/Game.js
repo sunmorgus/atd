@@ -171,7 +171,7 @@ var Game = Class.extend({
         
         var img = new Image();
         img.src = button.imgSrc;
-        context.drawImage(img, button.x, button.y, button.width, button.height);
+        context.drawImage(img, button.x, button.y);
     },
     DrawHeader : function(context, canvasWidth) {
         var group = this.GameObjManager.Group;

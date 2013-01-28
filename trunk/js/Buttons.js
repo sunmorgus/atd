@@ -104,10 +104,10 @@ var Buttons = Class.extend({
     },
     GetLevelButtons: function(count, level){
         var levelButtons = [];
-        var buttonXPadding = 40;
-        var buttonYPadding = 20;
-        var buttonWidth = 70;
-        var buttonHeight = 70;
+        var buttonXPadding = 60;
+        var buttonYPadding = 40;
+        var buttonWidth = 50;
+        var buttonHeight = 50;
         var x = 140;
         var y = 35;
         var row = 1;
