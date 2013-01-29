@@ -3,14 +3,14 @@
 	<head>
 		<title>Acquire the Doctor</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+		<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
 
 		<!-- custom css -->
 		<link rel="stylesheet" href="css/atd.css" />
 
-		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
-
+		<script src="js/jQuery/jquery-1.8.2.min.js"></script>
+		<script src="js/jQuery/jquery.mobile-1.2.0.min.js"></script>
+        
 		<!-- custom js -->
 		<script src="js/Utility/GUID.js"></script>
 		<script src="js/Utility/class.js"></script>
@@ -26,16 +26,30 @@
 
 		<div data-role="page" id="main">
 			<div data-role="content">
+                <div id="audio-items">
+        			<audio id="audio-theme" preload="auto" loop="loop">
+    					<source src="audio/doctor.mp3" type="audio/mp3">
+    					<source src="audio/doctor.wav" type="audio/wav">
+    				</audio>
+                </div>
+                <div id="imageLoader" style="display: none;">
+                    <!-- Buttons -->
+                    <img src="images/buttons/home.png" />
+                    <img src="images/buttons/lock.png" />
+                    <img src="images/buttons/music_off.png" />
+                    <img src="images/buttons/music_on.png" />
+                    <!-- Sprites -->
+                    <img src="images/sprites/player.png" />
+                    <!-- Backgrounds -->
+                    <img src="images/bg.png" />
+                    <img src="images/gameBg.png" />
+                </div>
 				<div id="gameHolder" style="width: 800px; margin-left: auto; margin-right: auto;"></div>
 				<div id="nameInput" style="position: fixed; display: none; width: 300px;">
 					<label for="name" style="font: 1.5em monospace; color: white;">Enter your Name:</label>
 					<input id="name" name="name" type="text" />
 					<span style="font: 1.5em monospace; color: white;">or Select a Name Below:</span>
 				</div>
-				<audio id="theme" autoplay="autoplay">
-					<source src="audio/doctor.mp3" type="audio/mp3">
-					<source src="audio/doctor.wav" type="audio/wav">
-				</audio>
 			</div>
 		</div>
 
@@ -49,9 +63,8 @@
 			</div>
 			<div data-role="content">
 				<p>
-					Note: This page is best viewed in Landscape orienation on mobile devices.
+					To play this game, you need a more <a href="http://lmgtfy.com/?q=Modern+Browser">Modern Browser</a>
 				</p>
-				<a href="#main" data-rel="back" data-role="button" data-inline="true" style="float: right;">Ok</a>
 			</div>
 		</div>
 

@@ -9,14 +9,14 @@ var Buttons = Class.extend({
                 buttons = [
                     // New Game Button
                     {
-                        id: "newGame",
+                        id: "start",
                         group: group,
                         width: 200,
                         height: 50,
                         x: 0, //x & y get set when the button is drawn
                         y: 0,
                         color: "rgba(255,0,0,.9)",
-                        text: "New Game",
+                        text: "Start",
                         textColor: "rgb(255,255,255)",
                         font: gameObjManager.DefaultFont
                     }
@@ -27,6 +27,35 @@ var Buttons = Class.extend({
                 break;
             case "levelSelect":
                 buttons = [{}];
+                break;
+            case "eol":
+                buttons = [
+                    {
+                        id: "levelStatus",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(0,0,0,0)",
+                        text: "You Won!",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "nextLevel",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(255,0,0,.9)",
+                        text: "Next Level ->",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont,
+                        level: 0
+                    }
+                ]
                 break;
         }
         
@@ -75,7 +104,7 @@ var Buttons = Class.extend({
         }
         playerButtons.push(submitButton);
         
-        var players = gameObjManager.Players;
+        var players = gameObjManager.GetPlayers();
         var len = players.length;
         var x = 100;
         var y = 135;
@@ -90,7 +119,8 @@ var Buttons = Class.extend({
                     x: x,
                     y: y,
                     color: "rgba(255,0,0,.9)",
-                    text: player.name,
+                    name: player.name,
+                    text: player.name + " | Level: " + player.level,
                     textColor: "rgb(255,255,255)",
                     font: gameObjManager.DefaultFont
                 }
@@ -118,14 +148,14 @@ var Buttons = Class.extend({
                 locked = false;
             }
             var button = {
-                id: "lvl" + i,
+                id: i + "lvl",
                 group: "level",
                 width: buttonWidth,
                 height: buttonHeight,
                 x: x,
                 y: y,
                 color: "rgba(255,0,0,.9)",
-                text: i,
+                text: i < 10 ? "0" + i : i,
                 textColor: "rgb(255,255,255)",
                 font: "bold 1.5em monospace",
                 imgSrc: "images/buttons/lock.png",

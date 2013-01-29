@@ -1,32 +1,26 @@
 ATD = {};
-ATD.GameObjManager = null;
 ATD.CurrentGame = null;
+ATD.MilleInterval = 33;
+ATD.MainLoopInterval = null;
+ATD.Level = null;
 //
 //Page Events
 //
-$(document).ready(function() {
-	var gameObjManager = new GameObjManager();
-    var currentGame = new Game(gameObjManager);
 
-	if (gameObjManager.WindowWidth < gameObjManager.WindowHeight) {
-		$.mobile.changePage("#orientation", {
-			transition : "pop",
-			role : "dialog",
-			reverse : false
-		});
-	} else {
-		currentGame.DrawIndex();
-		ATD.GameObjManager = gameObjManager;
+$(window).load(function() {
+    if(supports_html5_storage() === true){
+        var currentGame = new Game();
+        
+        currentGame.DrawIndex();
         ATD.CurrentGame = currentGame;
-	}
+    }
 });
 $('#game-field').live('tap', function(e) {
     var currentGame = ATD.CurrentGame;
-    var gameObjManager = ATD.GameObjManager;
 	var button = currentGame.ButtonClick(e.pageX, e.pageY);
 	if (button !== false) {
 		switch(button.id) {
-			case "newGame":
+			case "start":
                 currentGame.DrawPlayerSelect();
 				break;
             case "submitName":
@@ -36,16 +30,56 @@ $('#game-field').live('tap', function(e) {
                 }
                 break;
             case "player":
-                SubmitNameTap(button.text);
+                SubmitNameTap(button.name);
                 break;
             case "music":
                 currentGame.ToggleButton(button);
                 break;
             case "home":
+                clearInterval(ATD.MainLoopInterval);
+                ATD.MainLoopInterval = null;
                 currentGame.DrawIndex();
+                break;
+            case "nextLevel":
+                currentGame.Backgrounds = currentGame.GameObjManager.GetBackgrounds(ATD.Level);
+                currentGame.ScrollPosition = 500 * ATD.Level;
+                ATD.MainLoopInterval = setInterval(function(){
+                    currentGame.DrawLevel(ATD.Level);
+                }.bind(this), ATD.MilleInterval);
+                break;
+            default: //level buttons
+                if(button.locked === false){
+                    ATD.Level = parseInt(button.id);
+                    currentGame.Backgrounds = currentGame.GameObjManager.GetBackgrounds(ATD.Level);
+                    currentGame.ScrollPosition = 500 * ATD.Level;
+                    ATD.MainLoopInterval = setInterval(function (){
+                        currentGame.DrawLevel(ATD.Level);
+                    }.bind(this), ATD.MilleInterval);
+                }
                 break;
 		}
 	}
+});
+$(document).keydown(function(e){
+    //console.log(e);
+    switch(e.keyCode){
+        case 17: //ctrl
+            //ATD.CurrentGame.ShotCount += 1;
+            break;
+        case 39:
+            ATD.CurrentGame.MoveLeft = true;
+            break;
+    }
+});
+$(document).keyup(function(e){
+    switch(e.keyCode){
+        case 17: //ctrl
+            ATD.CurrentGame.Shoot();
+            break;
+        case 39:
+            ATD.CurrentGame.MoveLeft = false;
+            break;
+    }
 });
 //
 //End Page Events
@@ -55,7 +89,7 @@ $('#game-field').live('tap', function(e) {
 //Utility Functions
 //
 function SubmitNameTap(name) {
-	var gameObjManager = ATD.GameObjManager;
+	var gameObjManager = ATD.CurrentGame.GameObjManager;
 	var player = gameObjManager.GetPlayer(name);
     ATD.CurrentGame.DrawLevelSelect();
 }
