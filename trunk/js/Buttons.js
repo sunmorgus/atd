@@ -94,7 +94,7 @@ var Buttons = Class.extend({
             id: "submitName",
             group: gameObjManager.Group,
             width: 200,
-            height: 50,
+            height: 37,
             x: 0,
             y: 0,
             color: "rgba(255,0,0,.9)",
@@ -107,14 +107,14 @@ var Buttons = Class.extend({
         var players = gameObjManager.GetPlayers();
         var len = players.length;
         var x = 100;
-        var y = 135;
+        var y = 155;
         if(len > 0){
             for (var i = 0; i < len; i++){
                 var player = players[i];
                 playerButton = {
                     id: "player",
                     group: gameObjManager.Group,
-                    width: 200,
+                    width: 520,
                     height: 50,
                     x: x,
                     y: y,
@@ -132,7 +132,7 @@ var Buttons = Class.extend({
         
         return playerButtons;
     },
-    GetLevelButtons: function(count, level){
+    GetLevelButtons: function(gameObjManager, count, level){
         var levelButtons = [];
         var buttonXPadding = 60;
         var buttonYPadding = 40;
@@ -142,13 +142,19 @@ var Buttons = Class.extend({
         var y = 35;
         var row = 1;
         var column = 1;
+        var columns = 6;
+        if(gameObjManager.WindowWidth < 1000){
+            columns = 4;
+        } else if(gameObjManager.WindowWidth < 500){
+            columns = 2;
+        }
         for(var i = 1; i <= count; i++){
             var locked = true;
             if(i <= level){
                 locked = false;
             }
             var button = {
-                id: i + "lvl",
+                id: "lvlButton",
                 group: "level",
                 width: buttonWidth,
                 height: buttonHeight,
@@ -157,13 +163,14 @@ var Buttons = Class.extend({
                 color: "rgba(255,0,0,.9)",
                 text: i < 10 ? "0" + i : i,
                 textColor: "rgb(255,255,255)",
-                font: "bold 1.5em monospace",
+                font: gameObjManager.DefaultFont,
                 imgSrc: "images/buttons/lock.png",
-                locked: locked
+                locked: locked,
+                level: new Levels(i, gameObjManager.WindowHeight)
             }
             levelButtons.push(button);
             
-            if(column <= 4){
+            if(column <= columns){
                 x += buttonWidth + buttonXPadding;
                 column++;
             } else {
