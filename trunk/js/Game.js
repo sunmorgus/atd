@@ -8,6 +8,7 @@ var Game = Class.extend({
 
 		var canvasString = '<canvas id="game-field" width="' + w + '" height="' + h + '">To play this game, you need a more <a href="http://lmgtfy.com/?q=Modern+Browser">Modern Browser</a></canvas>';
 
+        $('#loader').hide();
 		$('#gameHolder').empty();
 		$(canvasString).appendTo('#gameHolder');
 
@@ -52,7 +53,7 @@ var Game = Class.extend({
             y = canvasY - yIn;
         }
         
-		for (var i = 0, len = buttons.length; i < len; i++) {
+		for (var i in buttons) {
 			var left = buttons[i].x, right = buttons[i].x + buttons[i].width;
 			var top = buttons[i].y, bottom = buttons[i].y + buttons[i].height;
 			if (right >= x && left <= x && bottom >= y && top <= y) {
@@ -92,7 +93,10 @@ var Game = Class.extend({
     //
     
     SetDefaults: function(){
+        //Level Objects
+        this.LevelTitle = "";
         //Background Objects
+        this.ScrollPosition = this.canvasWidth + 1;
         this.Backgrounds = [];
         this.MoveLeft = false;
         this.MoveRight = false;
@@ -127,11 +131,9 @@ var Game = Class.extend({
         gameObjManager.AudioTheme.pause();
     },
     
-    DrawImage: function(context, img, x, y, width, height, grayscale){
+    DrawImage: function(context, img, x, y, width, height){
         try {
-            if(grayscale === undefined || grayscale === null){
-                grayscale = false;
-            }
+            var grayscale = false; //moves way too slow now...maybe due to the back buffer?
             if(img.complete === true){
                 context.drawImage(img, x, y, width, height);
                 if(grayscale === true){
@@ -181,8 +183,8 @@ var Game = Class.extend({
             switch(gameObjManager.Group){
                 case "index": //draw buttons center x,y
                     var indexButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    var len = indexButtons.length;
-                    for(var i = 0; i < indexButtons.length; i++){
+                    //var len = indexButtons.length;
+                    for(var i in indexButtons){
                         var button = indexButtons[i];
                         button.x = this.canvasMiddle - (button.width / 2);
                         button.y = this.canvasVMiddle - (button.height / 2);
@@ -192,8 +194,8 @@ var Game = Class.extend({
                     break;
                 case "playerSelect":
                     var playerButtons = buttonsObj.GetPlayerButtons(gameObjManager);
-                    len = playerButtons.length;
-                    for(i = 0; i < len; i++){
+                    //len = playerButtons.length;
+                    for(var i in playerButtons){
                         button = playerButtons[i];
                         if(button.id === "submitName"){
                             button.x = 420;
@@ -208,8 +210,8 @@ var Game = Class.extend({
                 case "levelSelect":
                     // Show Level Select
                     var levelButtons = buttonsObj.GetLevelButtons(gameObjManager, 44, gameObjManager.CurrentPlayer.level);
-                    len = levelButtons.length;
-                    for(i = 0; i < len; i++){
+                    //len = levelButtons.length;
+                    for(var i in levelButtons){
                         button = levelButtons[i];
                         if(button.locked === false){
                             this.DrawTextButton(context, button);
@@ -219,11 +221,21 @@ var Game = Class.extend({
                         buttons.push(button);
                     }
                     break;
+                case "sol":
+                    var solButtons = buttonsObj.GetButtons(gameObjManager, false);
+                    for(var i in solButtons){
+                        button = solButtons[i];
+                        button.x = this.canvasMiddle - (button.width / 2);
+                        button.y = this.canvasVMiddle - button.height;
+                        button.text = this.LevelTitle;
+                        this.DrawTextButton(context, button);
+                        buttons.push(button);
+                    }
                 case "eol":
                     indexButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    len = indexButtons.length;
+                    //len = indexButtons.length;
                     var health = gameObjManager.CurrentPlayer.health;
-                    for(i = 0; i < indexButtons.length; i++){
+                    for(var i in indexButtons){
                         button = indexButtons[i];
                         switch(button.id){
                             case "levelStatus":
@@ -243,11 +255,12 @@ var Game = Class.extend({
                                     button.text = "Retry";
                                     
                                     //Reset Health for Restarting Level
-                                    button.level = ATD.Level;
+                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
                                     gameObjManager.CurrentPlayer.health = 200;
                                     gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
                                 } else {
                                     ATD.Level += 1;
+                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
                                     if(ATD.Level > gameObjManager.CurrentPlayer.level){
                                         //Set Current Player to Next Level
                                         gameObjManager.CurrentPlayer.level = ATD.Level;
@@ -266,7 +279,7 @@ var Game = Class.extend({
         }
         
         var headerButtons = buttonsObj.GetButtons(gameObjManager, true);
-        for (i = 0; i < headerButtons.length; i++){
+        for (var i in headerButtons){
             var headerButton = headerButtons[i];
             var img = new Image();
             switch(headerButton.id){
@@ -348,9 +361,9 @@ var Game = Class.extend({
                 context.fillStyle = "rgb(0,0,0)";
                 
                 //Draw Level Title
-                groupTitle = "Level: " + ATD.Level;
-                textSize = context.measureText(groupTitle);
-                context.fillText(groupTitle, this.canvasWidth / 2, 20);
+                //groupTitle = "Level: " + ATD.Level;
+                //textSize = context.measureText(groupTitle);
+                //context.fillText(groupTitle, this.canvasWidth / 2, 20);
                 
                 //Draw Health Bar
                 var healthLabel = "Health: ";
@@ -379,7 +392,7 @@ var Game = Class.extend({
         var bgImg0 = new Image();
         var bgImg1 = new Image();
         var bgImg2 = new Image();
-        for(var i = 0; i < len; i++){
+        for(var i in backgrounds){
             var background = backgrounds[i];
             bgImg0.src = background.imgSrc0;
             bgImg1.src = background.imgSrc1;
@@ -409,9 +422,8 @@ var Game = Class.extend({
             background.x1 = x1;
             background.x2 = x2;
         }
-        
-        var canvasRight = this.canvasWidth / 2;
-        this.ScrollPosition = width + (backgrounds[0].x0 - canvasRight - 75);
+
+        this.ScrollPosition = backgrounds[0].x0 + width;
     },
     DrawEol: function(context, bbcontext, alpha){
         context.fillStyle = "rgb(0,0,0)";
@@ -425,10 +437,10 @@ var Game = Class.extend({
     },
     DrawEnemies: function(context, gameObjManager){
         var enemies = this.Enemies;
-        var len = enemies.length;
+        //var len = enemies.length;
         var enemyImg = new Image();
         var canvasRight = this.canvasWidth / 2;
-        for(var i = 0; i < len; i++){
+        for(var i in enemies){
             var enemy = enemies[i];
             if(enemy.hit === false){
                 enemyImg.src = enemy.imgSrc;
@@ -438,6 +450,7 @@ var Game = Class.extend({
             }
             
             var x = enemy.x;
+
             var enemyRight = (enemy.width + (x - canvasRight));
             //console.log("x: " + (enemy.width + (x - 480)) + " canvasRigth: " + canvasRight);
             //console.log(this.Fighting);
@@ -496,9 +509,9 @@ var Game = Class.extend({
     },
     DrawShooting: function(context, gameObjManager){
         var shots = this.Shots;
-        var len = shots.length;
+        //var len = shots.length;
         var hold = [];
-        for(var i = 0; i < len; i++){
+        for(var i in shots){
             this.Shooting = true;
             context.fillStyle = shots[i].fillStyle;
             context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
@@ -509,7 +522,7 @@ var Game = Class.extend({
                 hold.push(i);
             }
         }
-        for(var c = 0; c < hold.length; c++){
+        for(var c in hold){
             this.Shots.splice(hold[c], 1);
         }
         this.Shooting = false;
@@ -517,15 +530,15 @@ var Game = Class.extend({
     DrawFight: function(context, gameObjManager){
         if(this.Fighting === true){
             var enemies = this.Enemies;
-            var elen = enemies.length;
+            //var elen = enemies.length;
             //var canvasRight = this.canvasX + this.canvasWidth;
-            for(var e = 0; e < elen; e++){
+            for(var e in enemies){
                 var enemy = enemies[e];
                 this.EnemyShoot(gameObjManager, enemy);
                 var shots = this.EnemyShots;
-                var len = shots.length;
+                //var len = shots.length;
                 var hold = [];
-                for(var i = 0; i < len; i++){
+                for(var i in shots){
                     this.EnemyShooting = true;
                     //var shot = shots[i];
                     context.fillStyle = shots[i].fillStyle;
@@ -538,7 +551,7 @@ var Game = Class.extend({
                         hold.push(i);
                     }
                 }
-                for(var c = 0; c < hold.length; c++){
+                for(var c in hold){
                     this.EnemyShots.splice(hold[c], 1);
                 }
                 this.EnemyShooting = false;
@@ -552,10 +565,10 @@ var Game = Class.extend({
         var bottom = y + height;
         if(isPlayer === true){
             var enemies = this.Enemies;
-            var eLen = enemies.length;
+            //var eLen = enemies.length;
             var hold = [];
             var hit = false;
-            for(var ei = 0; ei < eLen; ei++){
+            for(var ei in enemies){
                 var enemy = enemies[ei];
                 if(right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height){
                     enemy.health -= damage;
@@ -567,7 +580,7 @@ var Game = Class.extend({
                 }
             }
             
-            for(var i = 0; i < hold.length; i++){
+            for(var i in hold){
                 this.Fighting = false;
                 this.EnemyShots = [];
                 this.Enemies.splice(hold[i], 1);
@@ -665,6 +678,26 @@ var Game = Class.extend({
         
         context.drawImage(this.backBuffer, 0, 0);
 	},
+    DrawLevelStart: function(level){
+        //Setup Canvas
+        var gameObjManager = this.GameObjManager;
+        gameObjManager.Group = "sol";
+        var context = this.context;
+        var bbcontext = this.backBufferContext;
+        this.DestroyCanvas(context, bbcontext, true);
+        
+        this.LevelTitle = level.LevelTitle;
+        
+        //Draw Header, Floor, Buttons
+        this.DrawBackground(bbcontext, gameObjManager);
+        this.DrawFloor(bbcontext, this.canvasWidth, null, gameObjManager);
+        this.DrawPlayer(bbcontext, gameObjManager);
+        this.DrawEol(context, bbcontext, true);
+        this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
+        this.DrawButtons(bbcontext, false, gameObjManager);
+        
+        context.drawImage(this.backBuffer, 0, 0);
+    },
     DrawLevel: function(level){ //this is effectively the "Main Loop"
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
@@ -673,7 +706,7 @@ var Game = Class.extend({
         var bbcontext = this.backBufferContext;
         this.DestroyCanvas(context, bbcontext, false);
         var scrollPosition = this.ScrollPosition;
-        var limit = 480 * level.LevelNumber;
+        var limit = this.canvasWidth; //480 * level.LevelNumber;
         if(scrollPosition > limit && gameObjManager.CurrentPlayer.health > 0){            
             //Draw Header, Floor, and Buttons
             this.DrawBackground(bbcontext, gameObjManager);
@@ -687,17 +720,13 @@ var Game = Class.extend({
             
             context.drawImage(this.backBuffer, 0, 0);
         } else {
-            //End of Level Reached
-            this.DrawBackground(bbcontext, gameObjManager);
-            //Stop Loop
-            clearInterval(ATD.MainLoopInterval);
-            ATD.MainLoopInterval = null;
-            this.DrawEndOfLevel();
-            this.SetDefaults();
-            this.ScrollPosition = (500 * level.LevelNumber);
+            this.MoveLeft = false;
+            this.DrawEndOfLevel(level);
         }
     },
-    DrawEndOfLevel: function(){
+    DrawEndOfLevel: function(level){
+        clearInterval(ATD.MainLoopInterval);
+        ATD.MainLoopInterval = null;
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
         gameObjManager.Group = "eol";
@@ -712,6 +741,8 @@ var Game = Class.extend({
         this.DrawEol(context, bbcontext, true);
         this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
         this.DrawButtons(bbcontext, false, gameObjManager);
+        
+        this.SetDefaults();
         
         context.drawImage(this.backBuffer, 0, 0);
     }

@@ -1,4 +1,4 @@
-ATD = {};
+var ATD = {};
 ATD.CurrentGame = null;
 ATD.MilleInterval = 1 / 30;
 ATD.MainLoopInterval = null;
@@ -39,7 +39,7 @@ $(window).load(function() {
                         currentGame.DrawIndex();
                         break;
                     case "nextLevel":
-                        StartLevel(ATD.Level, currentGame);
+                        StartLevel(button.level, currentGame);
                         break;
                     case "lvlButton": //level buttons
                         if(button.locked === false){
@@ -105,12 +105,20 @@ function SubmitNameTap(name) {
 }
 
 function StartLevel(level, currentGame){
-    currentGame.Backgrounds = currentGame.GameObjManager.GetBackgrounds(level);
-    currentGame.Enemies = currentGame.GameObjManager.GetEnemies(level);
-    currentGame.ScrollPosition = 500 * level.LevelNumber;
-    ATD.MainLoopInterval = setInterval(function (){
-        currentGame.DrawLevel(level);
-    }.bind(this), ATD.MilleInterval);
+    var gameObjManager = currentGame.GameObjManager;
+    level.BuildLevel(gameObjManager.WindowWidth, gameObjManager.WindowHeight);
+    if(level.LevelTiles.length > 0){
+        currentGame.Backgrounds = gameObjManager.GetBackgrounds(level);
+        currentGame.Enemies = gameObjManager.GetLevel(level);
+        currentGame.DrawLevelStart(level);
+        setTimeout(function(){
+            ATD.MainLoopInterval = setInterval(function (){
+                currentGame.DrawLevel(level);
+            }.bind(this), ATD.MilleInterval);
+        }.bind(this), 2000);
+    } else {
+        currentGame.DrawIndex();
+    }
 }
 
 function supports_html5_storage() {

@@ -23,7 +23,7 @@ var GameObjManager = Class.extend({
         this.Buttons = [];
         
         //Player Info
-		this.PlayerVersion = 2;
+		this.PlayerVersion = 3;
 		this.CurrentPlayer = {};
         
         //Audio Objects
@@ -61,7 +61,11 @@ var GameObjManager = Class.extend({
 
 		for (var i = 0; i < len; i++) {
 			if (name === players[i].name) {
-				player = players[i];
+                if(players[i].version !== this.PlayerVersion){
+                    player = this.UpdatePlayer(players[i]);
+                } else {
+				    player = players[i];
+                }
 			}
 		}
         
@@ -99,6 +103,18 @@ var GameObjManager = Class.extend({
 		return player;
 	},
     
+    UpdatePlayer: function(player){
+        var playerVersion = this.PlayerVersion;
+        for(var i = player.version + 1; i == playerVersion; i++){
+            switch(i){
+                case 3: //updated imgSrc
+                    player.sprite.imgSrc = "images/sprites/player2.png";
+                    break;
+            }
+        }
+        return player;
+    },
+    
     GetBackgrounds: function(level){
         var backgrounds = [];
         var width = 2382;
@@ -113,11 +129,11 @@ var GameObjManager = Class.extend({
                 startX2: i > 0 ? i * width : i,
                 x0: i > 0 ? i * width : i,
                 x1: i > 0 ? i * width : i,
-                x2: i > 0 ? i * widht : i,
+                x2: i > 0 ? i * width : i,
                 y: 25,
                 width0: count > 1 ? count * width : width,
-                width1: (count > 1 ? count * width : width) + 480,
-                width2: (count > 1 ? count * width : width) + 480,
+                width1: width * 2,
+                width2: width * 2,
                 height: this.WindowHeight
             });
         }
@@ -128,7 +144,7 @@ var GameObjManager = Class.extend({
         return {
             id: null,
             x: 135,
-            y: this.CurrentPlayer.sprite.y + 83,
+            y: this.CurrentPlayer.sprite.y + 62,
             width: 50,
             height: 5,
             fillStyle: "rgb(0,255,255)",
@@ -140,7 +156,7 @@ var GameObjManager = Class.extend({
         return {
             id: null,
             x: x,
-            y: enemy.y + 83,
+            y: enemy.y + 62,
             width: 50,
             height: 5,
             fillStyle: "rgb(0,255,255)",
@@ -182,21 +198,29 @@ var GameObjManager = Class.extend({
         return enemy;
     },
     
-    GetEnemies: function(level){
-        var enemies = [];
-        var levelLen = level.EnemyPositions.length;
+    GetLevel: function(level){
+        var levelObjects = [];
+        //var levelLen = level.EnemyPositions.length;
         
-        for(var i = 0; i < levelLen; i++){
-            enemyPosition = level.EnemyPositions[i];
-            var enemy = this.NewEnemy(enemyPosition.type);
-            enemy.startX = enemyPosition.x;
-            enemy.x = enemyPosition.x;
-            enemy.startY = enemyPosition.y;
-            enemy.y = enemyPosition.y;
-            enemies.push(enemy);
+        for(var i in level.LevelTiles){
+            tile = level.LevelTiles[i];
+            if(tile !== null){
+                switch(tile.type){
+                    case "enemy":
+                        var enemy = this.NewEnemy(tile.enemyType);
+                        enemy.startX = tile.x;// - enemy.width;
+                        enemy.x = tile.x;// - enemy.width;
+                        enemy.startY = tile.y;
+                        enemy.y = tile.y;
+                        levelObjects.push(enemy);
+                        break;
+                    case "powerup":
+                        break;
+                }
+            }
         }
         
-        return enemies;
+        return levelObjects;
     },
     
     SetOption: function(option, value){

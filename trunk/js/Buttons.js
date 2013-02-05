@@ -28,6 +28,22 @@ var Buttons = Class.extend({
             case "levelSelect":
                 buttons = [{}];
                 break;
+            case "sol":
+                buttons = [
+                    {
+                        id: "levelTitle",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(0,0,0,0)",
+                        text: "",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    }
+                ];
+                break;
             case "eol":
                 buttons = [
                     {
@@ -111,7 +127,7 @@ var Buttons = Class.extend({
         if(len > 0){
             for (var i = 0; i < len; i++){
                 var player = players[i];
-                playerButton = {
+                var playerButton = {
                     id: "player",
                     group: gameObjManager.Group,
                     width: 520,
@@ -166,7 +182,7 @@ var Buttons = Class.extend({
                 font: gameObjManager.DefaultFont,
                 imgSrc: "images/buttons/lock.png",
                 locked: locked,
-                level: new Levels(i, gameObjManager.WindowHeight)
+                level: new Levels(i, gameObjManager.WindowHeight, gameObjManager.WindowWidth)
             }
             levelButtons.push(button);
             
