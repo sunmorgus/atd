@@ -21,6 +21,12 @@ $(window).load(function() {
                     case "start":
                         currentGame.DrawPlayerSelect();
                         break;
+                    case "credits":
+                        currentGame.DrawCredits();
+                        break;
+                    case "creditLink":
+                        window.open(button.text, "_blank");
+                        break;
                     case "submitName":
                         var name = $('#name').val();
                         if(name !== ''){
@@ -51,10 +57,11 @@ $(window).load(function() {
             }
         });
         $(document).keydown(function(e){
-            //console.log(e);
+            e.preventDefault();
             switch(e.keyCode){
                 case 17: //ctrl
-                    //ATD.CurrentGame.Shoot();
+                case 32:
+                    ATD.CurrentGame.Shooting = true;
                     break;
                 case 39:
                     ATD.CurrentGame.MoveLeft = true;
@@ -71,9 +78,12 @@ $(window).load(function() {
             }
         });
         $(document).keyup(function(e){
+            e.preventDefault();
             switch(e.keyCode){
                 case 17: //ctrl
-                    ATD.CurrentGame.Shoot();
+                case 32:
+                    //ATD.CurrentGame.Shoot();
+                    ATD.CurrentGame.Shooting = false;
                     break;
                 case 39:
                     ATD.CurrentGame.MoveLeft = false;
@@ -110,6 +120,7 @@ function StartLevel(level, currentGame){
     if(level.LevelTiles.length > 0){
         currentGame.Backgrounds = gameObjManager.GetBackgrounds(level);
         currentGame.Enemies = gameObjManager.GetLevel(level);
+        currentGame.PowerUps = gameObjManager.GetLevel(level);
         currentGame.DrawLevelStart(level);
         setTimeout(function(){
             ATD.MainLoopInterval = setInterval(function (){

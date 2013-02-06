@@ -56,6 +56,7 @@ var Game = Class.extend({
 		for (var i in buttons) {
 			var left = buttons[i].x, right = buttons[i].x + buttons[i].width;
 			var top = buttons[i].y, bottom = buttons[i].y + buttons[i].height;
+            //console.log(buttons[i].y);
 			if (right >= x && left <= x && bottom >= y && top <= y) {
 				isCollision = buttons[i];
 			}
@@ -74,14 +75,16 @@ var Game = Class.extend({
         }
     },
     Shoot: function(){
-        if(this.Shooting === false && this.Shots.length < 6){
+        if(this.Shooting === true){
             var gameObjManager = this.GameObjManager;
             this.Shots.push(gameObjManager.NewShot());
         }
     },
     EnemyShoot: function(gameObjManager, enemy){
-        if(this.EnemyShooting === false && this.EnemyShots.length < enemy.frequency){
-            this.EnemyShots.push(gameObjManager.NewEnemyShot(enemy, this.canvasWidth - 200));
+        if(enemy.frequency !== undefined && enemy.frequency !== null){
+            if(this.EnemyShooting === false && this.EnemyShots.length < enemy.frequency){
+                this.EnemyShots.push(gameObjManager.NewEnemyShot(enemy, this.canvasWidth - 200));
+            }
         }
     },
 	//
@@ -183,14 +186,88 @@ var Game = Class.extend({
             switch(gameObjManager.Group){
                 case "index": //draw buttons center x,y
                     var indexButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    //var len = indexButtons.length;
+                    var canvasRight = this.canvasX + this.canvasWidth;
+                    var canvasBottom = this.canvasHeight;
+                    var startY = canvasBottom - 210;
                     for(var i in indexButtons){
                         var button = indexButtons[i];
-                        button.x = this.canvasMiddle - (button.width / 2);
-                        button.y = this.canvasVMiddle - (button.height / 2);
-                        this.DrawTextButton(context, button);
+                        if(button.imgSrc !== undefined && button.imgSrc !== null){
+                            if(button.id === "player"){
+                                button.x = 60;
+                                button.y = canvasBottom - 175;
+                                this.DrawImageButton(context, button, false);
+                            }
+                            if(button.id === "title"){
+                                button.x = this.canvasMiddle - (button.width / 2);
+                                button.y = 55;
+                                this.DrawImageButton(context, button, true);
+                            }
+                        } else {
+                            button.x = canvasRight - button.width - 20;
+                            button.y = startY;
+                            this.DrawTextButton(context, button);
+                            startY += 70;
+                        }
+                        
                         buttons.push(button);
                     }
+                    break;
+                case "credits":
+                    var labelButton = new LabelButton("credits", gameObjManager);
+                    var startY = 35;
+                    
+                    //Me
+                    labelButton.text = "• Created/Developed/Designed By: Nicklas DeMayo | Url: ";
+                    var textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y = startY;
+                    this.DrawTextButton(context, labelButton);
+                    
+                    //My Website
+                    buttons[0] = new LinkButton("credits", gameObjManager);
+                    buttons[0].text = "http://www.csbctech.com";
+                    textSize = context.measureText(buttons[0].text);
+                    buttons[0].width = textSize.width;
+                    buttons[0].x = labelButton.x + labelButton.width;
+                    buttons[0].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[0]);
+                    //buttons[0] = linkButton;
+                    
+                    //Player and Enemy Vector
+                    labelButton.text = "• Dalek Character Graphic By: LBondo | Url: ";
+                    textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y += startY + 10;
+                    this.DrawTextButton(context, labelButton);
+                    
+                    //Player and Enemy Vector Website
+                    buttons[1] = new LinkButton("credits", gameObjManager);
+                    buttons[1].text = "http://lbondo.deviantart.com/";
+                    textSize = context.measureText(buttons[1].text);
+                    buttons[1].width = textSize.width;
+                    buttons[1].x = labelButton.x + labelButton.width;
+                    buttons[1].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[1]);
+                    
+                    //Tardis
+                    labelButton.text = "• T.A.R.D.I.S. Graphic By: Copiously Geeky | Url: ";
+                    textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y += startY + 10;
+                    this.DrawTextButton(context, labelButton);
+
+                    //Tardis Website
+                    buttons[2] = new LinkButton("credits", gameObjManager);
+                    buttons[2].text = "http://copiouslygeeky.com/";
+                    textSize = context.measureText(buttons[2].text);
+                    buttons[2].width = textSize.width;
+                    buttons[2].x = labelButton.x + labelButton.width;
+                    buttons[2].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[2]);
+                    
                     break;
                 case "playerSelect":
                     var playerButtons = buttonsObj.GetPlayerButtons(gameObjManager);
@@ -321,12 +398,20 @@ var Game = Class.extend({
         context.font = button.font;
         var textSize = context.measureText(button.text);
         context.fillText(button.text, button.x + (button.width / 2), button.y + (button.height / 1.7));
+        context.strokeStyle = "rgba(255,255,255,1)";
+        context.strokeRect(button.x, button.y, button.width, button.height);
     },
-    DrawImageButton: function(context, button){
-        context.fillStyle = "rgb(255,255,255)";
-        context.fillRect(button.x, button.y, button.width, button.height);
-        context.fillStyle = button.color;
-        context.fillRect(button.x, button.y, button.width, button.height);
+    DrawImageButton: function(context, button, fill){
+        if(fill === undefined || fill === null){
+            fill = true;
+        }
+        
+        if(fill === true){
+            //context.fillStyle = "rgb(255,255,255)";
+            //context.fillRect(button.x, button.y, button.width, button.height);
+            context.fillStyle = button.color;
+            context.fillRect(button.x, button.y, button.width, button.height);
+        }
         
         var img = new Image();
         img.src = button.imgSrc;
@@ -361,9 +446,9 @@ var Game = Class.extend({
                 context.fillStyle = "rgb(0,0,0)";
                 
                 //Draw Level Title
-                //groupTitle = "Level: " + ATD.Level;
-                //textSize = context.measureText(groupTitle);
-                //context.fillText(groupTitle, this.canvasWidth / 2, 20);
+                groupTitle = "Level: " + ATD.Level;
+                textSize = context.measureText(groupTitle);
+                context.fillText(groupTitle, this.canvasWidth / 2, 20);
                 
                 //Draw Health Bar
                 var healthLabel = "Health: ";
@@ -378,7 +463,7 @@ var Game = Class.extend({
                     context.fillStyle = "rgba(255,0,0,.8)";
                 }
                 context.fillRect(textSize.width, 6, health, 15);
-                context.strokeRect(textSize.width, 6, health, 15);
+                context.strokeRect(textSize.width, 6, 200, 15);
         }
 	},
     DrawFloor: function(context, canvasWidth, obstacle, gameObjManager){
@@ -432,50 +517,74 @@ var Game = Class.extend({
             context.fillStyle = "rgba(0,0,0,.5)";
             bbcontext.fillStyle = "rgba(0,0,0,.5)";
         }
-    	context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         bbcontext.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     },
     DrawEnemies: function(context, gameObjManager){
         var enemies = this.Enemies;
         //var len = enemies.length;
-        var enemyImg = new Image();
         var canvasRight = this.canvasWidth / 2;
+        var hold = [];
         for(var i in enemies){
+            var enemyImg = new Image();
             var enemy = enemies[i];
-            if(enemy.hit === false){
-                enemyImg.src = enemy.imgSrc;
-            }
-            else {
-                enemyImg.src = enemy.imgSrcInvert;
-            }
-            
             var x = enemy.x;
-
-            var enemyRight = (enemy.width + (x - canvasRight));
-            //console.log("x: " + (enemy.width + (x - 480)) + " canvasRigth: " + canvasRight);
-            //console.log(this.Fighting);
-            if(this.MoveLeft === true && this.Fighting === false){
-                if(enemyRight > canvasRight){
-                    x -= 8;
-                } else {
-                    this.Fighting = true;
+            
+            if(enemy.ObjType === "enemy"){
+                if(enemy.hit === false){
+                    enemyImg.src = enemy.imgSrc;
                 }
-            }
-            if(this.MoveRight === true && x < enemy.startX){
-                x += 8;
-                if(x > 320){
-                    this.Fighting = false
+                else {
+                    enemyImg.src = enemy.imgSrcInvert;
+                }
+                var enemyRight = (enemy.width + (x - canvasRight));
+                //console.log("x: " + (enemy.width + (x - 480)) + " canvasRigth: " + canvasRight);
+                //console.log(this.Fighting);
+                if(this.MoveLeft === true && this.Fighting === false){
+                    if(enemyRight > canvasRight){
+                        x -= 8;
+                    } else {
+                        enemy.fighting = true;
+                        this.Fighting = true;
+                    }
+                }
+                if(this.MoveRight === true && x < enemy.startX){
+                    x += 8;
+                    if(x > 320){
+                        enemy.fighting = false;
+                        this.Fighting = false;
+                    }
+                }
+                
+                if(enemy.hitCount === 6){
+                    enemy.hit = false;
+                    enemy.hitCount = 0;
+                }
+                enemy.hitCount++;
+            } else {
+                enemyImg.src = enemy.imgSrc;
+                if(this.MoveLeft === true && this.Fighting === false){
+                    x -= 8;
+                }
+                
+                if(this.MoveRight === true && x < enemy.startX){
+                    x += 8;
+                }
+                
+                var hit = this.DetectPowerUpCollision(x, enemy.y, enemy.width, enemy.height, enemy.health);
+                if(hit === true){
+                    hold.push(enemy);
                 }
             }
             
             this.DrawImage(context, enemyImg, x, enemy.y, enemy.width, enemy.height);
-            if(enemy.hitCount === 6){
-                enemy.hit = false;
-                enemy.hitCount = 0;
-            }
-            enemy.hitCount++;
+
             enemy.x = x;
             this.Enemies[i] = enemy;
+        }
+        
+        for(var i in hold){
+            this.Enemies.splice($.inArray(hold[i], this.Enemies), 1);
         }
     },
     DrawPlayer: function(context, gameObjManager){
@@ -509,23 +618,23 @@ var Game = Class.extend({
     },
     DrawShooting: function(context, gameObjManager){
         var shots = this.Shots;
-        //var len = shots.length;
+        if(this.Shooting === true){
+            this.Shoot();
+        }
         var hold = [];
         for(var i in shots){
-            this.Shooting = true;
             context.fillStyle = shots[i].fillStyle;
             context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
             
             shots[i].x += 25;
             var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, true, shots[i].damage);
             if(shots[i].x >= this.canvasMiddle * 2 || hit === true){
-                hold.push(i);
+                hold.push(shots[i]);
             }
         }
         for(var c in hold){
-            this.Shots.splice(hold[c], 1);
+            this.Shots.splice($.inArray(hold[c], this.Shots), 1);
         }
-        this.Shooting = false;
     },
     DrawFight: function(context, gameObjManager){
         if(this.Fighting === true){
@@ -534,27 +643,28 @@ var Game = Class.extend({
             //var canvasRight = this.canvasX + this.canvasWidth;
             for(var e in enemies){
                 var enemy = enemies[e];
-                this.EnemyShoot(gameObjManager, enemy);
-                var shots = this.EnemyShots;
-                //var len = shots.length;
-                var hold = [];
-                for(var i in shots){
-                    this.EnemyShooting = true;
-                    //var shot = shots[i];
-                    context.fillStyle = shots[i].fillStyle;
-                    context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
-
-                    
-                    shots[i].x -= 15;
-                    var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, false, shots[i].damage);
-                    if((shots[i].x + shots[i].width) <= this.canvasX / 10 || hit === true){
-                        hold.push(i);
+                if(enemy.fighting === true){
+                    this.EnemyShoot(gameObjManager, enemy);
+                    var shots = this.EnemyShots;
+                    //var len = shots.length;
+                    var hold = [];
+                    for(var i in shots){
+                        this.EnemyShooting = true;
+                        //var shot = shots[i];
+                        context.fillStyle = shots[i].fillStyle;
+                        context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
+    
+                        var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, false, shots[i].damage);
+                        shots[i].x -= enemy.shotspeed;
+                        if((shots[i].x + shots[i].width) <= this.canvasX / 10 || hit === true){
+                            hold.push(shots[i]);
+                        }
                     }
+                    for(var c in hold){
+                        this.EnemyShots.splice($.inArray(hold[c], this.EnemyShots), 1);
+                    }
+                    this.EnemyShooting = false;
                 }
-                for(var c in hold){
-                    this.EnemyShots.splice(hold[c], 1);
-                }
-                this.EnemyShooting = false;
             }
         }
     },
@@ -565,25 +675,26 @@ var Game = Class.extend({
         var bottom = y + height;
         if(isPlayer === true){
             var enemies = this.Enemies;
-            //var eLen = enemies.length;
             var hold = [];
             var hit = false;
             for(var ei in enemies){
                 var enemy = enemies[ei];
-                if(right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height){
-                    enemy.health -= damage;
-                    enemy.hit = true;
-                    if(enemy.health <= 0){
-                        hold.push(enemy);
+                if(enemy.ObjType === "enemy"){
+                    if(right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height){
+                        enemy.health -= damage;
+                        enemy.hit = true;
+                        if(enemy.health <= 0){
+                            hold.push(enemy);
+                        }
+                        hit = true;
                     }
-                    hit = true;
                 }
             }
             
             for(var i in hold){
                 this.Fighting = false;
                 this.EnemyShots = [];
-                this.Enemies.splice(hold[i], 1);
+                this.Enemies.splice($.inArray(hold[i], this.Enemies), 1);
             }
             return hit;
         } else {
@@ -595,6 +706,24 @@ var Game = Class.extend({
             }
         }
         
+        return false;
+    },
+    DetectPowerUpCollision: function(px, py, pwidth, pheight, health){
+        var left = px;
+        //var right = px + pwidth;
+        var top = py;
+        var bottom = py + pheight;
+        var currentPlayer = this.GameObjManager.CurrentPlayer;
+        if(left <= (currentPlayer.sprite.x + currentPlayer.sprite.width) && 
+            (
+                (top <= currentPlayer.sprite.y && bottom >= currentPlayer.sprite.y) || 
+                (top <= currentPlayer.sprite.y + currentPlayer.sprite.height && bottom >= currentPlayer.sprite.y + currentPlayer.sprite.height) || 
+                (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
+            )
+        ){
+            this.GameObjManager.CurrentPlayer.health += health;
+            return true;
+        }
         return false;
     },
     ExplodeEnemy: function(enemy){
@@ -626,11 +755,30 @@ var Game = Class.extend({
         //Start Theme Song
         this.PlayAudio("audio-theme", gameObjManager);
         
-        this.Fighting = false;
-        
 		// Save Context Object
         context.drawImage(this.backBuffer, 0, 0);
 	},
+    DrawCredits: function(){
+        //Setup Canvas
+        var gameObjManager = this.GameObjManager;
+        gameObjManager.Group = "credits";
+        var context = this.context;
+        var bbcontext = this.backBufferContext;
+        this.DestroyCanvas(context, bbcontext, false);
+        
+        var bgImg = new Image();
+        bgImg.src = 'images/bg.jpg';
+        this.DrawImage(bbcontext, bgImg, 0, 0, this.canvasWidth, this.canvasHeight);
+        
+        this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
+        
+        bbcontext.fillStyle = "rgba(0,0,0,.7)";
+        bbcontext.fillRect(10, 35, this.canvasWidth - 20, this.canvasHeight - 45);
+        
+        this.DrawButtons(bbcontext, false, gameObjManager);
+        
+        context.drawImage(this.backBuffer, 0, 0);
+    },
     DrawPlayerSelect: function(){
         //Setup Canvas
         var gameObjManager = this.GameObjManager;

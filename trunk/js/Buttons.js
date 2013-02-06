@@ -7,7 +7,16 @@ var Buttons = Class.extend({
         switch(group){
             case "index":
                 buttons = [
-                    // New Game Button
+                    {
+                        id: "title",
+                        group: group,
+                        width: 762,
+                        height: 88,
+                        x: 0, //x & y get set when the button is drawn
+                        y: 0,
+                        color: "rgba(0,0,0,.6)",
+                        imgSrc: "images/title.png"
+                    },
                     {
                         id: "start",
                         group: group,
@@ -15,10 +24,43 @@ var Buttons = Class.extend({
                         height: 50,
                         x: 0, //x & y get set when the button is drawn
                         y: 0,
-                        color: "rgba(255,0,0,.9)",
+                        color: "rgba(0,0,0,.7)",
                         text: "Start",
                         textColor: "rgb(255,255,255)",
                         font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "credits",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0, //x & y get set when the button is drawn
+                        y: 0,
+                        color: "rgba(0,0,0,.7)",
+                        text: "Credits",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "help",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0, //x & y get set when the button is drawn
+                        y: 0,
+                        color: "rgba(0,0,0,.7)",
+                        text: "Help",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "player",
+                        group: group,
+                        width: 125,
+                        height: 150,
+                        x: 0,
+                        y: 0,
+                        imgSrc: "images/sprites/player2.png"
                     }
                 ]
                 break;
@@ -195,8 +237,57 @@ var Buttons = Class.extend({
                 column = 1;
                 x = 140;
             }
-    }
+        }
         
         return levelButtons;
+    },
+    GetLabelButton: function(group, gameObjManager){
+        var labelButton = {
+
+                    };
+        return labelButton;
+    },
+    GetLinkButton: function(group, gameObjManager){
+        var linkButton = {
+                        id: "creditLink",
+                        group: group,
+                        width: 0,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(0,0,0,0)",
+                        text: "",
+                        textColor: "rgb(46,154,254)",
+                        font: gameObjManager.DefaultFont
+                    };
+        return linkButton;
+    },
+});
+var LabelButton = Class.extend({
+    init: function(group, gameObjManager){
+        this.id = "credit";
+        this.group = group;
+        this.width = 0;
+        this.height = 50;
+        this.x = 0;
+        this.y = 0;
+        this.color = "rgba(0,0,0,0)";
+        this.text = "";
+        this.textColor = "rgb(255,255,255)";
+        this.font = gameObjManager.DefaultFont;
+    }
+});
+var LinkButton = Class.extend({
+    init: function(group, gameObjManager){
+        this.id = "creditLink";
+        this.group = group;
+        this.width = 0;
+        this.height = 50;
+        this.x = 0;
+        this.y = 0;
+        this.color = "rgba(0,0,0,0)";
+        this.text = "";
+        this.textColor = "rgb(46,154,254)";
+        this.font = gameObjManager.DefaultFont;
     }
 });

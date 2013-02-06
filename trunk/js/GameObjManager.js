@@ -164,38 +164,10 @@ var GameObjManager = Class.extend({
         };
     },
     
-    NewEnemy: function(type){
-        var enemy = null;
-        switch(type){
-            case "gold":
-                enemy = {
-                    health: 50,
-                    damage: 10,
-                    frequency: 1,
-                    imgSrc: "images/sprites/enemies/gold.png",
-                    imgSrcInvert: "images/sprites/enemies/gold_invert.png",
-                    startX: 0,
-                    x: 0,
-                    startY: 0,
-                    y: 0,
-                    width: 125,
-                    height: 150,
-                    hit: false,
-                    hitCount: 0
-                }
-                break;
-            case "army":
-                break;
-            case "white":
-                break;
-            case "orange":
-                break;
-            case "blue":
-                break;
-            case "yellow":
-                break;
-        }
-        return enemy;
+    NewPowerUp: function(type){
+        var powerUp = null;
+
+        return powerUp;
     },
     
     GetLevel: function(level){
@@ -207,7 +179,7 @@ var GameObjManager = Class.extend({
             if(tile !== null){
                 switch(tile.type){
                     case "enemy":
-                        var enemy = this.NewEnemy(tile.enemyType);
+                        var enemy = new Enemy(tile.enemyType);
                         enemy.startX = tile.x;// - enemy.width;
                         enemy.x = tile.x;// - enemy.width;
                         enemy.startY = tile.y;
@@ -215,6 +187,12 @@ var GameObjManager = Class.extend({
                         levelObjects.push(enemy);
                         break;
                     case "powerup":
+                        var powerUp = new PowerUp(tile.powerUpType);
+                        powerUp.startX = tile.x;
+                        powerUp.x = tile.x;
+                        powerUp.startY = tile.y;
+                        powerUp.y = tile.y;
+                        levelObjects.push(powerUp);
                         break;
                 }
             }

@@ -3,7 +3,7 @@ var Levels = Class.extend({
         this.LevelNumber = lvl;
         
         this.LevelTiles = [];
-        this.TileTypes = ["empty", "enemy", "powerup"];
+        this.TileTypes = ["empty", "empty", "enemy", "enemy", "powerup"];
     },    
     BuildLevel: function(windowWidth, windowHeight){
         var lvl = this.LevelNumber;
@@ -21,7 +21,8 @@ var Levels = Class.extend({
                 this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
                 this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
                 var enemyTypes = ["gold"];
-                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, windowHeight, false);
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
                 break;
             case 2:
                 this.LevelTitle = "The Survivors";
@@ -33,7 +34,8 @@ var Levels = Class.extend({
                 this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
                 
                 var enemyTypes = ["gold"];
-                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, windowHeight, false);
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
                 break;
             case 3:
                 this.LevelTitle = "The Escape";
@@ -45,7 +47,8 @@ var Levels = Class.extend({
                 this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
                 
                 var enemyTypes = ["gold"];
-                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, windowHeight, false);
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
                 break;
             case 4:
                 this.LevelTitle = "The Ambush";
@@ -57,11 +60,13 @@ var Levels = Class.extend({
                 this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
                 
                 var enemyTypes = ["gold"];
-                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, windowHeight, false);
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
         }
     },
-    GetLevelTiles: function(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, windowHeight, randomY){
-        var x = windowWidth + tileWidth;
+    GetLevelTiles: function(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, randomY){
+        var enemyX = windowWidth + tileWidth;
+        var powerUpX = tileWidth;
         for(var i = 0; i < tileCount; i++){
             tileType = tileTypes[this.GetRandomInt(0, tileTypes.length - 1)];
             switch(tileType){
@@ -69,11 +74,11 @@ var Levels = Class.extend({
                     this.LevelTiles.push(null);
                     break;
                 case "enemy":
-                    if(x < (levelWidth - 200)){
+                    if(enemyX < (levelWidth - 200)){
                         var enemyPosition = {
                             type: tileType,
                             enemyType: enemyTypes[this.GetRandomInt(0, enemyTypes.length - 1)],
-                            x: x,
+                            x: enemyX,
                             y: windowHeight - 175
                         };
                         this.LevelTiles.push(enemyPosition);
@@ -82,10 +87,21 @@ var Levels = Class.extend({
                     }
                     break;
                 case "powerup":
-                    this.LevelTiles.push(null);
+                    if(powerUpX < (levelWidth - 200)){
+                        var powerUpPosition = {
+                            type: tileType,
+                            powerUpType: powerUpTypes[this.GetRandomInt(0, powerUpTypes.length - 1)],
+                            x: powerUpX,
+                            y: this.GetRandomInt(25, windowHeight - 175)
+                        };
+                        this.LevelTiles.push(powerUpPosition);
+                    } else {
+                        this.LevelTiles.push(null);
+                    }
                     break;
             }
-            x += tileWidth;
+            enemyX += tileWidth;
+            powerUpX += tileWidth;
         }
     },
     GetRandomInt: function(min, max) {

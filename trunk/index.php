@@ -12,14 +12,31 @@
 		<script src="js/jQuery/jquery-1.8.2.min.js"></script>
         
 		<!-- custom js -->
+        <? if(!isset($_GET['debug'])){ ?>
 		<script src="js/Utility/GUID.js"></script>
 		<script src="js/Utility/class.js"></script>
 		<script src="js/Utility/JSON2.js"></script>
+        <script src="js/Objects/GameObj.min.js"></script>
+        <script src="js/Objects/Enemy.min.js"></script>
+        <script src="js/Objects/PowerUp.min.js"></script>
+        <script src="js/Levels.min.js"></script>
+		<script src="js/Buttons.min.js"></script>
+		<script src="js/GameObjManager.min.js"></script>
+		<script src="js/Game.min.js"></script>
+		<script src="js/Index.min.js"></script>
+        <? } else { ?>
+    	<script src="js/Utility/GUID.js"></script>
+		<script src="js/Utility/class.js"></script>
+		<script src="js/Utility/JSON2.js"></script>
+        <script src="js/Objects/GameObj.js"></script>
+        <script src="js/Objects/Enemy.js"></script>
+        <script src="js/Objects/PowerUp.js"></script>
         <script src="js/Levels.js"></script>
 		<script src="js/Buttons.js"></script>
 		<script src="js/GameObjManager.js"></script>
 		<script src="js/Game.js"></script>
 		<script src="js/Index.js"></script>
+        <? } ?>
 	</head>
 	<body>
         <div id="audio-items">
@@ -30,6 +47,7 @@
         </div>
         <div id="imageLoader" style="display: none;">
             <!-- Buttons -->
+            <img src="images/title.png" />
             <img src="images/buttons/home.png" />
             <img src="images/buttons/lock.png" />
             <img src="images/buttons/music_off.png" />
