@@ -1,7 +1,7 @@
 var GameObjManager = Class.extend({
 	init : function() {
         //Page Objects
-        var gameWidth = window.innerWidth;
+        var gameWidth = 1200;
         var gameHeight = window.innerHeight;
         var scaleToFitX = gameWidth / 800;
         var scaleToFitY = gameHeight / 480;
@@ -23,7 +23,7 @@ var GameObjManager = Class.extend({
         this.Buttons = [];
         
         //Player Info
-		this.PlayerVersion = 3;
+		this.PlayerVersion = 4;
 		this.CurrentPlayer = {};
         
         //Audio Objects
@@ -93,11 +93,12 @@ var GameObjManager = Class.extend({
                 imgSrcInvert: "images/sprites/player_invert.png",
                 width: 125,
                 height: 150,
+                startX: 60,
                 startY: this.WindowHeight - 175,
                 x: 60,
                 y: this.WindowHeight - 175
             },
-			version : 2
+			version : 4
 		}
 
 		return player;
@@ -105,10 +106,13 @@ var GameObjManager = Class.extend({
     
     UpdatePlayer: function(player){
         var playerVersion = this.PlayerVersion;
-        for(var i = player.version + 1; i == playerVersion; i++){
+        for(var i = player.version; i <= playerVersion; i++){
             switch(i){
                 case 3: //updated imgSrc
                     player.sprite.imgSrc = "images/sprites/player2.png";
+                    break;
+                case 4: //added startx
+                    player.sprite.startX = 60;
                     break;
             }
         }
@@ -143,7 +147,7 @@ var GameObjManager = Class.extend({
     NewShot: function(){
         return {
             id: null,
-            x: 135,
+            x: this.CurrentPlayer.sprite.x + this.CurrentPlayer.sprite.width,
             y: this.CurrentPlayer.sprite.y + 62,
             width: 50,
             height: 5,

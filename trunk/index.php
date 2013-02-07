@@ -55,6 +55,7 @@
             <!-- Sprites -->
             <img src="images/sprites/player2.png" />
             <img src="images/sprites/player_invert.png" />
+            <img src="images/sprites/tardis.png" />
             <img src="images/sprites/enemies/gold.png" />
             <img src="images/sprites/enemies/gold_invert.png" />
             <img src="images/sprites/powerups/ss.png" />

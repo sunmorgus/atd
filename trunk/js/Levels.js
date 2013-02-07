@@ -3,7 +3,7 @@ var Levels = Class.extend({
         this.LevelNumber = lvl;
         
         this.LevelTiles = [];
-        this.TileTypes = ["empty", "empty", "enemy", "enemy", "powerup"];
+        this.TileTypes = ["empty", "empty", "empty", "empty", "enemy", "enemy", "enemy", "powerup"];
     },    
     BuildLevel: function(windowWidth, windowHeight){
         var lvl = this.LevelNumber;
@@ -53,7 +53,7 @@ var Levels = Class.extend({
             case 4:
                 this.LevelTitle = "The Ambush";
                 this.Grayscale = true;
-                this.BossLevel = true;
+                this.BossLevel = false;
                 
                 this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
                 this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
@@ -62,6 +62,18 @@ var Levels = Class.extend({
                 var enemyTypes = ["gold"];
                 var powerUpTypes = ["health"];
                 this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
+                break;
+            case 5:
+                this.LevelTitle = "Dalek Supreme!";
+                this.Grayscale = true;
+                this.BossLevel = true;
+                
+                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
+                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
+                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                
+                var enemyTypes = [];
+                var powerUpTypes = ["health"];
         }
     },
     GetLevelTiles: function(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, randomY){

@@ -57,44 +57,52 @@ $(window).load(function() {
             }
         });
         $(document).keydown(function(e){
-            e.preventDefault();
             switch(e.keyCode){
                 case 17: //ctrl
                 case 32:
+                    e.preventDefault();
                     ATD.CurrentGame.Shooting = true;
                     break;
                 case 39:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveLeft = true;
                     break;
                 case 37:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveRight = true;
                     break;
                 case 38: //up
+                    e.preventDefault();
                     ATD.CurrentGame.MoveUp = true;
                     break;
                 case 40:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveDown = true;
                     break;
             }
         });
         $(document).keyup(function(e){
-            e.preventDefault();
             switch(e.keyCode){
                 case 17: //ctrl
                 case 32:
+                    e.preventDefault();
                     //ATD.CurrentGame.Shoot();
                     ATD.CurrentGame.Shooting = false;
                     break;
                 case 39:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveLeft = false;
                     break;
                 case 37:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveRight = false;
                     break;
                 case 38: //up
+                    e.preventDefault();
                     ATD.CurrentGame.MoveUp = false;
                     break;
                 case 40:
+                    e.preventDefault();
                     ATD.CurrentGame.MoveDown = false;
                     break;
             }

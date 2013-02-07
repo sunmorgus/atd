@@ -24,7 +24,8 @@ var Buttons = Class.extend({
                         height: 50,
                         x: 0, //x & y get set when the button is drawn
                         y: 0,
-                        color: "rgba(0,0,0,.7)",
+                        //color: "rgba(0,0,0,.7)",
+                        color: "rgb(56,77,214)",
                         text: "Start",
                         textColor: "rgb(255,255,255)",
                         font: gameObjManager.DefaultFont
@@ -155,7 +156,7 @@ var Buttons = Class.extend({
             height: 37,
             x: 0,
             y: 0,
-            color: "rgba(255,0,0,.9)",
+            color: "rgba(0,0,0,.9)",
             text: "Submit",
             textColor: "rgb(255,255,255)",
             font: gameObjManager.DefaultFont
@@ -176,7 +177,8 @@ var Buttons = Class.extend({
                     height: 50,
                     x: x,
                     y: y,
-                    color: "rgba(255,0,0,.9)",
+                    //color: "rgba(0,0,0,.9)",
+                    color: "rgb(56,77,214)",
                     name: player.name,
                     text: player.name + " | Level: " + player.level,
                     textColor: "rgb(255,255,255)",
@@ -218,7 +220,7 @@ var Buttons = Class.extend({
                 height: buttonHeight,
                 x: x,
                 y: y,
-                color: "rgba(255,0,0,.9)",
+                color: "rgba(56,77,214,.9)",
                 text: i < 10 ? "0" + i : i,
                 textColor: "rgb(255,255,255)",
                 font: gameObjManager.DefaultFont,
@@ -261,6 +263,255 @@ var Buttons = Class.extend({
                         font: gameObjManager.DefaultFont
                     };
         return linkButton;
+    },
+    Draw: function(context, headerOnly, gameObjManager, canvasX, canvasWidth, canvasHeight, canvasMiddle, canvasVMiddle, LevelTitle, DrawImage){
+        var buttons = [];
+        if(!headerOnly){
+            switch(gameObjManager.Group){
+                case "index": //draw buttons center x,y
+                    var indexButtons = this.GetButtons(gameObjManager, false);
+                    var canvasRight = canvasX + canvasWidth;
+                    var canvasBottom = canvasHeight;
+                    var startY = canvasBottom - 210;
+                    for(var i in indexButtons){
+                        var button = indexButtons[i];
+                        if(button.imgSrc !== undefined && button.imgSrc !== null){
+                            if(button.id === "player"){
+                                button.x = 60;
+                                button.y = canvasBottom - 175;
+                                this.DrawImageButton(context, button, false, false, DrawImage);
+                            }
+                            if(button.id === "title"){
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = 55;
+                                this.DrawImageButton(context, button, true, false, DrawImage);
+                            }
+                        } else {
+                            button.x = canvasRight - button.width - 20;
+                            button.y = startY;
+                            this.DrawTextButton(context, button, true);
+                            startY += 70;
+                        }
+                        
+                        buttons.push(button);
+                    }
+                    break;
+                case "credits":
+                    var labelButton = new LabelButton("credits", gameObjManager);
+                    var startY = 35;
+                    
+                    //Me
+                    labelButton.text = "• Created/Developed/Designed By: Nicklas DeMayo | Url: ";
+                    var textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y = startY;
+                    this.DrawTextButton(context, labelButton);
+                    
+                    //My Website
+                    buttons[0] = new LinkButton("credits", gameObjManager);
+                    buttons[0].text = "http://www.csbctech.com";
+                    textSize = context.measureText(buttons[0].text);
+                    buttons[0].width = textSize.width;
+                    buttons[0].x = labelButton.x + labelButton.width;
+                    buttons[0].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[0]);
+                    //buttons[0] = linkButton;
+                    
+                    //Player and Enemy Vector
+                    labelButton.text = "• Dalek Character Graphic By: LBondo | Url: ";
+                    textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y += startY + 10;
+                    this.DrawTextButton(context, labelButton);
+                    
+                    //Player and Enemy Vector Website
+                    buttons[1] = new LinkButton("credits", gameObjManager);
+                    buttons[1].text = "http://lbondo.deviantart.com/";
+                    textSize = context.measureText(buttons[1].text);
+                    buttons[1].width = textSize.width;
+                    buttons[1].x = labelButton.x + labelButton.width;
+                    buttons[1].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[1]);
+                    
+                    //Tardis
+                    labelButton.text = "• T.A.R.D.I.S. Graphic By: Copiously Geeky | Url: ";
+                    textSize = context.measureText(labelButton.text);
+                    labelButton.width = textSize.width;
+                    labelButton.x = 20;
+                    labelButton.y += startY + 10;
+                    this.DrawTextButton(context, labelButton);
+
+                    //Tardis Website
+                    buttons[2] = new LinkButton("credits", gameObjManager);
+                    buttons[2].text = "http://copiouslygeeky.com/";
+                    textSize = context.measureText(buttons[2].text);
+                    buttons[2].width = textSize.width;
+                    buttons[2].x = labelButton.x + labelButton.width;
+                    buttons[2].y = labelButton.y;
+                    this.DrawTextButton(context, buttons[2]);
+                    
+                    break;
+                case "playerSelect":
+                    var playerButtons = this.GetPlayerButtons(gameObjManager);
+                    //len = playerButtons.length;
+                    for(var i in playerButtons){
+                        button = playerButtons[i];
+                        if(button.id === "submitName"){
+                            button.x = 420;
+                            button.y = 68;
+                            this.DrawTextButton(context, button, true);
+                        } else {
+                            this.DrawTextButton(context, button, true);
+                        }
+                        buttons.push(button);
+                    }
+                    break;
+                case "levelSelect":
+                    // Show Level Select
+                    var levelButtons = this.GetLevelButtons(gameObjManager, 44, gameObjManager.CurrentPlayer.level);
+                    //len = levelButtons.length;
+                    for(var i in levelButtons){
+                        button = levelButtons[i];
+                        if(button.locked === false){
+                            this.DrawTextButton(context, button, true);
+                        } else {
+                            this.DrawImageButton(context, button, true, true, DrawImage);
+                        }
+                        buttons.push(button);
+                    }
+                    break;
+                case "sol":
+                    var solButtons = this.GetButtons(gameObjManager, false);
+                    for(var i in solButtons){
+                        button = solButtons[i];
+                        button.x = canvasMiddle - (button.width / 2);
+                        button.y = canvasVMiddle - button.height;
+                        button.text = LevelTitle;
+                        this.DrawTextButton(context, button);
+                        buttons.push(button);
+                    }
+                case "eol":
+                    indexButtons = this.GetButtons(gameObjManager, false);
+                    //len = indexButtons.length;
+                    var health = gameObjManager.CurrentPlayer.health;
+                    for(var i in indexButtons){
+                        button = indexButtons[i];
+                        switch(button.id){
+                            case "levelStatus":
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = 35;
+                                
+                                if(health === 0){
+                                    button.text = "You Were Exterminated!";
+                                }
+                                
+                                break;
+                            case "nextLevel":
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = 35 + button.height + 10;
+                                
+                                if(health === 0){
+                                    button.text = "Retry";
+                                    
+                                    //Reset Health for Restarting Level
+                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
+                                    gameObjManager.CurrentPlayer.health = 200;
+                                    gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
+                                } else {
+                                    ATD.Level += 1;
+                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
+                                    if(ATD.Level > gameObjManager.CurrentPlayer.level){
+                                        //Set Current Player to Next Level
+                                        gameObjManager.CurrentPlayer.level = ATD.Level;
+                                        gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
+                                    }
+                                }
+                                
+                                break;
+                        }
+
+                        this.DrawTextButton(context, button);
+                        buttons.push(button);
+                    }
+                    break;
+            }
+        }
+        
+        var headerButtons = this.GetButtons(gameObjManager, true);
+        for (var i in headerButtons){
+            var headerButton = headerButtons[i];
+            var img = new Image();
+            switch(headerButton.id){
+                case "music":
+                    var audio = (gameObjManager.GetOption("audio") === 'true');
+                    if(audio === true){
+                        img.src = headerButton.imgSrcOn;
+                    } else {
+                        img.src = headerButton.imgSrcOff;
+                    }
+                    headerButton.x = canvasWidth - headerButton.width;
+
+                    break;
+                case "home":
+                    if(gameObjManager.Group !== "index"){
+                        img.src = headerButton.imgSrc;
+                        headerButton.x = canvasWidth - (headerButton.width * 2);
+                    }
+                    break;
+            }
+            
+            headerButton.y = 0;
+            DrawImage(context, img, headerButton.x, 0, headerButton.width, headerButton.height);
+            
+            //add switch on group here to draw header buttons specific to group
+            
+            buttons.push(headerButton);
+        }
+        
+        return buttons;
+    },
+    DrawTextButton: function(context, button, stroke){
+        if(stroke === undefined || stroke === null){
+            stroke = false;
+        }
+        
+        if(stroke === true){
+            context.strokeStyle = "rgba(255,255,255,1)";
+            context.strokeRect(button.x, button.y, button.width, button.height);
+        }
+        
+        context.fillStyle = button.color;
+        context.fillRect(button.x, button.y, button.width, button.height);
+        context.fillStyle = button.textColor;
+        context.textAlign = "center";
+        context.font = button.font;
+        var textSize = context.measureText(button.text);
+        context.fillText(button.text, button.x + (button.width / 2), button.y + (button.height / 1.7));
+    },
+    DrawImageButton: function(context, button, fill, stroke, DrawImage){
+        if(fill === undefined || fill === null){
+            fill = true;
+        }
+        
+        if(stroke === undefined || stroke === null){
+            stroke = false;
+        }
+        
+        if(fill === true){
+            context.fillStyle = button.color;
+            context.fillRect(button.x, button.y, button.width, button.height);
+        }
+        
+        if(stroke === true){
+            context.strokeStyle = "rgba(255,255,255,1)";
+            context.strokeRect(button.x, button.y, button.width, button.height);
+        }
+        
+        var img = new Image();
+        img.src = button.imgSrc;
+        DrawImage(context, img, button.x, button.y, button.width, button.height);
     },
 });
 var LabelButton = Class.extend({

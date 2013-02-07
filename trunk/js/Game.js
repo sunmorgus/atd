@@ -180,243 +180,17 @@ var Game = Class.extend({
 	},
     DrawButtons : function(context, headerOnly, gameObjManager) {
         var buttonsObj = new Buttons();
-        var buttons = [];
-
-        if(!headerOnly){
-            switch(gameObjManager.Group){
-                case "index": //draw buttons center x,y
-                    var indexButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    var canvasRight = this.canvasX + this.canvasWidth;
-                    var canvasBottom = this.canvasHeight;
-                    var startY = canvasBottom - 210;
-                    for(var i in indexButtons){
-                        var button = indexButtons[i];
-                        if(button.imgSrc !== undefined && button.imgSrc !== null){
-                            if(button.id === "player"){
-                                button.x = 60;
-                                button.y = canvasBottom - 175;
-                                this.DrawImageButton(context, button, false);
-                            }
-                            if(button.id === "title"){
-                                button.x = this.canvasMiddle - (button.width / 2);
-                                button.y = 55;
-                                this.DrawImageButton(context, button, true);
-                            }
-                        } else {
-                            button.x = canvasRight - button.width - 20;
-                            button.y = startY;
-                            this.DrawTextButton(context, button);
-                            startY += 70;
-                        }
-                        
-                        buttons.push(button);
-                    }
-                    break;
-                case "credits":
-                    var labelButton = new LabelButton("credits", gameObjManager);
-                    var startY = 35;
-                    
-                    //Me
-                    labelButton.text = "• Created/Developed/Designed By: Nicklas DeMayo | Url: ";
-                    var textSize = context.measureText(labelButton.text);
-                    labelButton.width = textSize.width;
-                    labelButton.x = 20;
-                    labelButton.y = startY;
-                    this.DrawTextButton(context, labelButton);
-                    
-                    //My Website
-                    buttons[0] = new LinkButton("credits", gameObjManager);
-                    buttons[0].text = "http://www.csbctech.com";
-                    textSize = context.measureText(buttons[0].text);
-                    buttons[0].width = textSize.width;
-                    buttons[0].x = labelButton.x + labelButton.width;
-                    buttons[0].y = labelButton.y;
-                    this.DrawTextButton(context, buttons[0]);
-                    //buttons[0] = linkButton;
-                    
-                    //Player and Enemy Vector
-                    labelButton.text = "• Dalek Character Graphic By: LBondo | Url: ";
-                    textSize = context.measureText(labelButton.text);
-                    labelButton.width = textSize.width;
-                    labelButton.x = 20;
-                    labelButton.y += startY + 10;
-                    this.DrawTextButton(context, labelButton);
-                    
-                    //Player and Enemy Vector Website
-                    buttons[1] = new LinkButton("credits", gameObjManager);
-                    buttons[1].text = "http://lbondo.deviantart.com/";
-                    textSize = context.measureText(buttons[1].text);
-                    buttons[1].width = textSize.width;
-                    buttons[1].x = labelButton.x + labelButton.width;
-                    buttons[1].y = labelButton.y;
-                    this.DrawTextButton(context, buttons[1]);
-                    
-                    //Tardis
-                    labelButton.text = "• T.A.R.D.I.S. Graphic By: Copiously Geeky | Url: ";
-                    textSize = context.measureText(labelButton.text);
-                    labelButton.width = textSize.width;
-                    labelButton.x = 20;
-                    labelButton.y += startY + 10;
-                    this.DrawTextButton(context, labelButton);
-
-                    //Tardis Website
-                    buttons[2] = new LinkButton("credits", gameObjManager);
-                    buttons[2].text = "http://copiouslygeeky.com/";
-                    textSize = context.measureText(buttons[2].text);
-                    buttons[2].width = textSize.width;
-                    buttons[2].x = labelButton.x + labelButton.width;
-                    buttons[2].y = labelButton.y;
-                    this.DrawTextButton(context, buttons[2]);
-                    
-                    break;
-                case "playerSelect":
-                    var playerButtons = buttonsObj.GetPlayerButtons(gameObjManager);
-                    //len = playerButtons.length;
-                    for(var i in playerButtons){
-                        button = playerButtons[i];
-                        if(button.id === "submitName"){
-                            button.x = 420;
-                            button.y = 68;
-                            this.DrawTextButton(context, button);
-                        } else {
-                            this.DrawTextButton(context, button);
-                        }
-                        buttons.push(button);
-                    }
-                    break;
-                case "levelSelect":
-                    // Show Level Select
-                    var levelButtons = buttonsObj.GetLevelButtons(gameObjManager, 44, gameObjManager.CurrentPlayer.level);
-                    //len = levelButtons.length;
-                    for(var i in levelButtons){
-                        button = levelButtons[i];
-                        if(button.locked === false){
-                            this.DrawTextButton(context, button);
-                        } else {
-                            this.DrawImageButton(context, button);
-                        }
-                        buttons.push(button);
-                    }
-                    break;
-                case "sol":
-                    var solButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    for(var i in solButtons){
-                        button = solButtons[i];
-                        button.x = this.canvasMiddle - (button.width / 2);
-                        button.y = this.canvasVMiddle - button.height;
-                        button.text = this.LevelTitle;
-                        this.DrawTextButton(context, button);
-                        buttons.push(button);
-                    }
-                case "eol":
-                    indexButtons = buttonsObj.GetButtons(gameObjManager, false);
-                    //len = indexButtons.length;
-                    var health = gameObjManager.CurrentPlayer.health;
-                    for(var i in indexButtons){
-                        button = indexButtons[i];
-                        switch(button.id){
-                            case "levelStatus":
-                                button.x = this.canvasMiddle - (button.width / 2);
-                                button.y = 35;
-                                
-                                if(health === 0){
-                                    button.text = "You Were Exterminated!";
-                                }
-                                
-                                break;
-                            case "nextLevel":
-                                button.x = this.canvasMiddle - (button.width / 2);
-                                button.y = 35 + button.height + 10;
-                                
-                                if(health === 0){
-                                    button.text = "Retry";
-                                    
-                                    //Reset Health for Restarting Level
-                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
-                                    gameObjManager.CurrentPlayer.health = 200;
-                                    gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
-                                } else {
-                                    ATD.Level += 1;
-                                    button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
-                                    if(ATD.Level > gameObjManager.CurrentPlayer.level){
-                                        //Set Current Player to Next Level
-                                        gameObjManager.CurrentPlayer.level = ATD.Level;
-                                        gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
-                                    }
-                                }
-                                
-                                break;
-                        }
-
-                        this.DrawTextButton(context, button);
-                        buttons.push(button);
-                    }
-                    break;
-            }
-        }
-        
-        var headerButtons = buttonsObj.GetButtons(gameObjManager, true);
-        for (var i in headerButtons){
-            var headerButton = headerButtons[i];
-            var img = new Image();
-            switch(headerButton.id){
-                case "music":
-                    var audio = (gameObjManager.GetOption("audio") === 'true');
-                    if(audio === true){
-                        img.src = headerButton.imgSrcOn;
-                    } else {
-                        img.src = headerButton.imgSrcOff;
-                    }
-                    headerButton.x = this.canvasWidth - headerButton.width;
-
-                    break;
-                case "home":
-                    if(gameObjManager.Group !== "index"){
-                        img.src = headerButton.imgSrc;
-                        headerButton.x = this.canvasWidth - (headerButton.width * 2);
-                    }
-                    break;
-            }
-            
-            headerButton.y = 0;
-            this.DrawImage(context, img, headerButton.x, 0, headerButton.width, headerButton.height);
-            
-            //add switch on group here to draw header buttons specific to group
-            
-            buttons.push(headerButton);
-        }
-        
-        this.GameObjManager.Buttons = buttons;
+        this.GameObjManager.Buttons = buttonsObj.Draw(context, 
+                                                        headerOnly, 
+                                                        gameObjManager, 
+                                                        this.canvasX, 
+                                                        this.canvasWidth, 
+                                                        this.canvasHeight, 
+                                                        this.canvasMiddle, 
+                                                        this.canvasVMiddle, 
+                                                        this.LevelTitle,
+                                                        this.DrawImage);
 	},
-    DrawTextButton: function(context, button){
-        //context.fillStyle = "rgb(255,255,255)";
-        //context.fillRect(button.x, button.y, button.width, button.height);
-        context.fillStyle = button.color;
-        context.fillRect(button.x, button.y, button.width, button.height);
-        context.fillStyle = button.textColor;
-        context.textAlign = "center";
-        context.font = button.font;
-        var textSize = context.measureText(button.text);
-        context.fillText(button.text, button.x + (button.width / 2), button.y + (button.height / 1.7));
-        context.strokeStyle = "rgba(255,255,255,1)";
-        context.strokeRect(button.x, button.y, button.width, button.height);
-    },
-    DrawImageButton: function(context, button, fill){
-        if(fill === undefined || fill === null){
-            fill = true;
-        }
-        
-        if(fill === true){
-            //context.fillStyle = "rgb(255,255,255)";
-            //context.fillRect(button.x, button.y, button.width, button.height);
-            context.fillStyle = button.color;
-            context.fillRect(button.x, button.y, button.width, button.height);
-        }
-        
-        var img = new Image();
-        img.src = button.imgSrc;
-        this.DrawImage(context, img, button.x, button.y, button.width, button.height);
-    },
     DrawHeader : function(context, canvasWidth, gameObjManager) {
         var group = gameObjManager.Group;
 		context.fillStyle = "rgba(255,255,255,.9)";
@@ -463,6 +237,7 @@ var Game = Class.extend({
                     context.fillStyle = "rgba(255,0,0,.8)";
                 }
                 context.fillRect(textSize.width, 6, health, 15);
+                context.strokeStyle = "rgba(0,0,0,1)";
                 context.strokeRect(textSize.width, 6, 200, 15);
         }
 	},
@@ -487,13 +262,14 @@ var Game = Class.extend({
             var x1 = background.x1;
             var x2 = background.x2;
             
-            if(this.MoveLeft === true && this.Fighting === false){
+            if(this.MoveLeft === true && this.Fighting === false && 
+                (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
                 x0 -= 6;
                 x1 -= 9;
                 x2 -= 12;
             }
 
-            if(this.MoveRight === true && x0 < background.startX0){
+            if(this.MoveRight === true && x0 < background.startX0 && gameObjManager.CurrentPlayer.sprite.x <= 60){
                 x0 += 6;
                 x1 += 9;
                 x2 += 12;
@@ -540,16 +316,17 @@ var Game = Class.extend({
                 var enemyRight = (enemy.width + (x - canvasRight));
                 //console.log("x: " + (enemy.width + (x - 480)) + " canvasRigth: " + canvasRight);
                 //console.log(this.Fighting);
-                if(this.MoveLeft === true && this.Fighting === false){
+                if(this.MoveLeft === true && this.Fighting === false && 
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
                     if(enemyRight > canvasRight){
-                        x -= 8;
+                        x -= 12;
                     } else {
                         enemy.fighting = true;
                         this.Fighting = true;
                     }
                 }
-                if(this.MoveRight === true && x < enemy.startX){
-                    x += 8;
+                if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
+                    x += 12;
                     if(x > 320){
                         enemy.fighting = false;
                         this.Fighting = false;
@@ -563,12 +340,13 @@ var Game = Class.extend({
                 enemy.hitCount++;
             } else {
                 enemyImg.src = enemy.imgSrc;
-                if(this.MoveLeft === true && this.Fighting === false){
-                    x -= 8;
+                if(this.MoveLeft === true && this.Fighting === false && 
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
+                    x -= 12;
                 }
                 
-                if(this.MoveRight === true && x < enemy.startX){
-                    x += 8;
+                if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
+                    x += 12;
                 }
                 
                 var hit = this.DetectPowerUpCollision(x, enemy.y, enemy.width, enemy.height, enemy.health);
@@ -597,6 +375,16 @@ var Game = Class.extend({
             playerImg.src = currentPlayer.sprite.imgSrcInvert;
         }
         
+        var x = currentPlayer.sprite.x;
+        
+        if(this.MoveLeft === true && (x + currentPlayer.sprite.width) <= this.canvasMiddle){
+            x += 12;
+        }
+        
+        if(this.MoveRight === true && (x >= currentPlayer.sprite.startX)){
+            x -= 12;
+        }
+        
         var y = currentPlayer.sprite.y;
         
         if(this.MoveUp === true && y > 25){
@@ -614,6 +402,7 @@ var Game = Class.extend({
         }
         this.PlayerInvertCount++;
         
+        gameObjManager.CurrentPlayer.sprite.x = x;
         gameObjManager.CurrentPlayer.sprite.y = y;
     },
     DrawShooting: function(context, gameObjManager){
@@ -721,7 +510,10 @@ var Game = Class.extend({
                 (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
             )
         ){
-            this.GameObjManager.CurrentPlayer.health += health;
+            var currentHealth = this.GameObjManager.CurrentPlayer.health;
+            if(currentHealth < 200){
+                this.GameObjManager.CurrentPlayer.health += health;
+            }
             return true;
         }
         return false;
@@ -794,7 +586,7 @@ var Game = Class.extend({
         //Draw Header and Buttons
         this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
         
-        bbcontext.fillStyle = "rgba(0,0,0,.7)";
+        bbcontext.fillStyle = "rgba(0,0,0,.5)";
         bbcontext.fillRect(this.canvasX + 90, this.canvasY + 30, 550, this.canvasHeight);
         
         this.DrawButtons(bbcontext, false, gameObjManager);
@@ -891,6 +683,7 @@ var Game = Class.extend({
         this.DrawButtons(bbcontext, false, gameObjManager);
         
         this.SetDefaults();
+        this.GameObjManager.CurrentPlayer.sprite.x = this.GameObjManager.CurrentPlayer.sprite.startX;
         
         context.drawImage(this.backBuffer, 0, 0);
     }
