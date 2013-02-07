@@ -101,6 +101,7 @@ var Game = Class.extend({
         //Background Objects
         this.ScrollPosition = this.canvasWidth + 1;
         this.Backgrounds = [];
+        this.Moving = false;
         this.MoveLeft = false;
         this.MoveRight = false;
         this.MoveUp = false;
@@ -136,26 +137,8 @@ var Game = Class.extend({
     
     DrawImage: function(context, img, x, y, width, height){
         try {
-            var grayscale = false; //moves way too slow now...maybe due to the back buffer?
             if(img.complete === true){
                 context.drawImage(img, x, y, width, height);
-                if(grayscale === true){
-                    var imageData = context.getImageData(x, y, width, height);
-                    var data = imageData.data;
-            
-                    for(var i = 0; i < data.length; i += 4) {
-                      var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-                      // red
-                      data[i] = brightness;
-                      // green
-                      data[i + 1] = brightness;
-                      // blue
-                      data[i + 2] = brightness;
-                    }
-            
-                    // overwrite original image
-                    context.putImageData(imageData, x, y, width, height);
-                }
             } else {            
                 (function(img, x, y){
                     img.onload = function(){
@@ -164,6 +147,26 @@ var Game = Class.extend({
                 })(img, x, y);            
             }
         } catch (err) {}
+    },
+    
+    DrawGrayscale: function(context){
+        var canvasWidth = this.canvasWidth;
+        var canvasHeight = this.canvasHeight;
+        var imageData = context.getImageData(0, 0, canvasWidth, canvasHeight);
+        var data = imageData.data;
+
+        for(var i = 0; i < data.length; i += 4) {
+          var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+          // red
+          data[i] = brightness;
+          // green
+          data[i + 1] = brightness;
+          // blue
+          data[i + 2] = brightness;
+        }
+
+        // overwrite original image
+        context.putImageData(imageData, 0, 0, canvasWidth, canvasHeight);
     },
     
     //
@@ -261,9 +264,8 @@ var Game = Class.extend({
             var x0 = background.x0;
             var x1 = background.x1;
             var x2 = background.x2;
-            
-            if(this.MoveLeft === true && this.Fighting === false && 
-                (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
+            if(this.MoveLeft === true && this.Moving === true && 
+                (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
                 x0 -= 6;
                 x1 -= 9;
                 x2 -= 12;
@@ -299,37 +301,62 @@ var Game = Class.extend({
     DrawEnemies: function(context, gameObjManager){
         var enemies = this.Enemies;
         //var len = enemies.length;
-        var canvasRight = this.canvasWidth / 2;
+        var canvasRight = this.canvasWidth;
         var hold = [];
         for(var i in enemies){
             var enemyImg = new Image();
             var enemy = enemies[i];
             var x = enemy.x;
-            
-            if(enemy.ObjType === "enemy"){
+            var y = enemy.y;
+            if(enemy.ObjType === "enemy" || enemy.ObjType === "boss"){
                 if(enemy.hit === false){
                     enemyImg.src = enemy.imgSrc;
                 }
                 else {
                     enemyImg.src = enemy.imgSrcInvert;
                 }
-                var enemyRight = (enemy.width + (x - canvasRight));
-                //console.log("x: " + (enemy.width + (x - 480)) + " canvasRigth: " + canvasRight);
-                //console.log(this.Fighting);
-                if(this.MoveLeft === true && this.Fighting === false && 
-                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
-                    if(enemyRight > canvasRight){
+                var enemyRight = enemy.width + x;
+
+                if(this.MoveLeft === true && (this.Fighting === false || (this.Fighting === true && enemyRight > canvasRight)) && 
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
                         x -= 12;
-                    } else {
-                        enemy.fighting = true;
-                        this.Fighting = true;
-                    }
+                        this.Moving = true;
                 }
+                
+                if(x < canvasRight){
+                    enemy.fighting = true;
+                    this.Fighting = true;
+                }
+                
                 if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
                     x += 12;
-                    if(x > 320){
+                    this.Moving = true;
+                    if(x > canvasRight){
                         enemy.fighting = false;
                         this.Fighting = false;
+                    }
+                }
+                
+                if(enemy.ObjType === "boss"){
+                    var top = 25;
+                    var bottom = this.canvasHeight - 25;                    
+                    var enemyBottom = y + enemy.height;
+                    if(y >= top && enemy.moveUp === true){
+                        y -= 8;
+                        enemy.moveUp = true;
+                        enemy.moveDown = false;
+                    } else {
+                        enemy.moveUp = false;
+                        enemy.moveDown = true;
+                    }
+                    
+                    if(y <= top || (y >= top && enemyBottom <= bottom && enemy.moveDown === true)){
+                        y += 8;
+                        enemy.moveUp = false;
+                        enemy.moveDown = true;
+                    } else {
+                        enemy.moveUp = true;
+                        enemy.moveDown = false;
                     }
                 }
                 
@@ -341,23 +368,26 @@ var Game = Class.extend({
             } else {
                 enemyImg.src = enemy.imgSrc;
                 if(this.MoveLeft === true && this.Fighting === false && 
-                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle){
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
+                    this.Moving = true;
                     x -= 12;
                 }
                 
                 if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
                     x += 12;
+                    this.Moving = true;
                 }
                 
-                var hit = this.DetectPowerUpCollision(x, enemy.y, enemy.width, enemy.height, enemy.health);
+                var hit = this.DetectPowerUpCollision(x, y, enemy.width, enemy.height, enemy.health);
                 if(hit === true){
                     hold.push(enemy);
                 }
             }
             
-            this.DrawImage(context, enemyImg, x, enemy.y, enemy.width, enemy.height);
+            this.DrawImage(context, enemyImg, x, y, enemy.width, enemy.height);
 
             enemy.x = x;
+            enemy.y = y;
             this.Enemies[i] = enemy;
         }
         
@@ -377,12 +407,14 @@ var Game = Class.extend({
         
         var x = currentPlayer.sprite.x;
         
-        if(this.MoveLeft === true && (x + currentPlayer.sprite.width) <= this.canvasMiddle){
+        if(this.MoveLeft === true && (x + currentPlayer.sprite.width) <= this.canvasMiddle - 100){
             x += 12;
+            this.Moving = true;
         }
         
         if(this.MoveRight === true && (x >= currentPlayer.sprite.startX)){
             x -= 12;
+            this.Moving = true;
         }
         
         var y = currentPlayer.sprite.y;
@@ -414,8 +446,17 @@ var Game = Class.extend({
         for(var i in shots){
             context.fillStyle = shots[i].fillStyle;
             context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
-            
-            shots[i].x += 25;
+            var prevI = i - 1;
+            if(prevI !== -1){
+                if(shots[prevI].x - shots[i].speed > shots[i].x + shots[i].width){
+                    shots[i].x += 25;
+                } else {
+                    hold.push(shots[i]);
+                }
+            } else {
+                shots[i].x += 25;
+            }
+
             var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, true, shots[i].damage);
             if(shots[i].x >= this.canvasMiddle * 2 || hit === true){
                 hold.push(shots[i]);
@@ -427,6 +468,7 @@ var Game = Class.extend({
     },
     DrawFight: function(context, gameObjManager){
         if(this.Fighting === true){
+            this.Moving = false;
             var enemies = this.Enemies;
             //var elen = enemies.length;
             //var canvasRight = this.canvasX + this.canvasWidth;
@@ -468,7 +510,7 @@ var Game = Class.extend({
             var hit = false;
             for(var ei in enemies){
                 var enemy = enemies[ei];
-                if(enemy.ObjType === "enemy"){
+                if(enemy.ObjType === "enemy" || enemy.ObjType === "boss"){
                     if(right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height){
                         enemy.health -= damage;
                         enemy.hit = true;
@@ -482,6 +524,9 @@ var Game = Class.extend({
             
             for(var i in hold){
                 this.Fighting = false;
+                if(this.MoveLeft === true || this.MoveRight === true){
+                    this.Moving = true;
+                }
                 this.EnemyShots = [];
                 this.Enemies.splice($.inArray(hold[i], this.Enemies), 1);
             }
@@ -622,6 +667,7 @@ var Game = Class.extend({
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
         gameObjManager.Group = "sol";
+        gameObjManager.CurrentPlayer.sprite.x = 60;
         var context = this.context;
         var bbcontext = this.backBufferContext;
         this.DestroyCanvas(context, bbcontext, true);
@@ -637,6 +683,10 @@ var Game = Class.extend({
         this.DrawButtons(bbcontext, false, gameObjManager);
         
         context.drawImage(this.backBuffer, 0, 0);
+        
+        if(level.Grayscale === true){
+            this.DrawGrayscale(context);
+        }
     },
     DrawLevel: function(level){ //this is effectively the "Main Loop"
         //Setup Canvas
@@ -654,11 +704,14 @@ var Game = Class.extend({
             this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
             this.DrawButtons(bbcontext, false, gameObjManager);
             this.DrawFloor(bbcontext, this.canvasWidth, null, gameObjManager);
-            this.DrawShooting(bbcontext, gameObjManager);
             this.DrawPlayer(bbcontext, gameObjManager);
+            this.DrawShooting(bbcontext, gameObjManager);
             this.DrawFight(bbcontext, gameObjManager);
             
             context.drawImage(this.backBuffer, 0, 0);
+            if(level.Grayscale === true){
+                this.DrawGrayscale(context);
+            }
         } else {
             this.MoveLeft = false;
             this.DrawEndOfLevel(level);
@@ -686,6 +739,10 @@ var Game = Class.extend({
         this.GameObjManager.CurrentPlayer.sprite.x = this.GameObjManager.CurrentPlayer.sprite.startX;
         
         context.drawImage(this.backBuffer, 0, 0);
+        
+        if(level.Grayscale === true){
+            this.DrawGrayscale(context);
+        }
     }
     //
     //End Canvas Group Draw Methods

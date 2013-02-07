@@ -152,7 +152,8 @@ var GameObjManager = Class.extend({
             width: 50,
             height: 5,
             fillStyle: "rgb(0,255,255)",
-            damage: 10
+            damage: 10,
+            speed: 100
         };
     },
     
@@ -197,6 +198,14 @@ var GameObjManager = Class.extend({
                         powerUp.startY = tile.y;
                         powerUp.y = tile.y;
                         levelObjects.push(powerUp);
+                        break;
+                    case "boss":
+                        var boss = new Boss(tile.enemyType);
+                        boss.startX = tile.x;
+                        boss.x = tile.x;
+                        boss.startY = tile.y;
+                        boss.y = tile.y;
+                        levelObjects.push(boss);
                         break;
                 }
             }

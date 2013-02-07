@@ -58,6 +58,8 @@
             <img src="images/sprites/tardis.png" />
             <img src="images/sprites/enemies/gold.png" />
             <img src="images/sprites/enemies/gold_invert.png" />
+            <img src="images/sprites/enemies/dalek-supreme.png" />
+            <img src="images/sprites/enemies/dalek-supreme-invert.png" />
             <img src="images/sprites/powerups/ss.png" />
             <!-- Backgrounds -->
             <img src="images/bg.jpg" />
