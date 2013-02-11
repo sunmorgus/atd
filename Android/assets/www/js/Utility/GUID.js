@@ -1,0 +1,1 @@
+function GUID(){var e=function(){return Math.floor(Math.random()*65536).toString(16)};return e()+e()+"-"+e()+"-"+e()+"-"+e()+"-"+e()+e()+e()}
