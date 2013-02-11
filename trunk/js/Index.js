@@ -3,6 +3,7 @@ ATD.CurrentGame = null;
 ATD.MilleInterval = 1 / 30;
 ATD.MainLoopInterval = null;
 ATD.Level = null;
+ATD.Fading = false;
 //
 //Page Events
 //
@@ -40,13 +41,26 @@ $(window).load(function() {
                         currentGame.ToggleButton(button);
                         break;
                     case "home":
-                        clearInterval(ATD.MainLoopInterval);
-                        ATD.MainLoopInterval = null;
-                        currentGame.DrawIndex();
+                        if(ATD.Fading === false){
+                            clearInterval(ATD.MainLoopInterval);
+                            ATD.MainLoopInterval = null;
+                            currentGame.DrawIndex();
+                        }
                         break;
                     case "nextLevel":
-                        StartLevel(button.level, currentGame);
-                        break;
+                        if(ATD.Fading === false){
+                            if(currentGame.GameObjManager.CurrentPlayer.health > 0){
+                                currentGame.FadeTardis(currentGame, currentGame.GameObjManager);
+                                setTimeout(function(){
+                                    StartLevel(button.level, currentGame);
+                                }.bind(this), 5500);
+                            } else {
+                                currentGame.GameObjManager.CurrentPlayer.health = 200;
+                                currentGame.GameObjManager.SavePlayer(currentGame.GameObjManager.CurrentPlayer);
+                                StartLevel(button.level, currentGame);
+                            }
+                            break;
+                        }
                     case "lvlButton": //level buttons
                         if(button.locked === false){
                             ATD.Level = button.level.LevelNumber;
@@ -125,7 +139,7 @@ function SubmitNameTap(name) {
 function StartLevel(level, currentGame){
     var gameObjManager = currentGame.GameObjManager;
     level.BuildLevel(gameObjManager.WindowWidth, gameObjManager.WindowHeight);
-    if(level.LevelTiles.length > 0){
+    if(level.LevelTiles.length > 1){
         currentGame.Backgrounds = gameObjManager.GetBackgrounds(level);
         currentGame.Enemies = gameObjManager.GetLevel(level);
         currentGame.PowerUps = gameObjManager.GetLevel(level);
@@ -134,7 +148,7 @@ function StartLevel(level, currentGame){
             ATD.MainLoopInterval = setInterval(function (){
                 currentGame.DrawLevel(level);
             }.bind(this), ATD.MilleInterval);
-        }.bind(this), 2000);
+        }.bind(this), 5500);
     } else {
         currentGame.DrawIndex();
     }

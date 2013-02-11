@@ -4,6 +4,7 @@ var PowerUp = GameObj.extend({
         switch(type){
             case "health":
                 this.id = GUID();
+                this.type = "health",
                 this.health = 10;
                 this.imgSrc = "images/sprites/powerups/ss.png";
                 this.width = 75;
@@ -11,9 +12,20 @@ var PowerUp = GameObj.extend({
                 break;
             case "tardis":
                 this.id = GUID();
+                this.type = "tardis",
                 this.imgSrc = "images/sprites/tardis.png";
                 this.width = 135;
                 this.height = 282;
+                break;
+            case "doctor_1":
+                this.id = GUID();
+                this.type = "doctor";
+                this.imgSrc = "images/sprites/doctors/doctor_1.png",
+                this.width = 48;
+                this.height = 150;
+                this.message = "Yes, there are very few of us left. Now let's get out of here, and be crafty! Come along!";
+                this.speechTime = 3500;
+                this.saved = false;
                 break;
         }
     }

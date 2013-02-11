@@ -7,10 +7,11 @@ var Levels = Class.extend({
     },    
     BuildLevel: function(windowWidth, windowHeight){
         var lvl = this.LevelNumber;
-        var levelWidth = lvl * 2382;
+        var levelWidth = lvl * (2382 / 2);
         var tileWidth = 200;
         var tileCount = levelWidth / tileWidth;
         var tileTypes = this.TileTypes;
+        
         switch(lvl){
             case 1:
                 this.LevelTitle = "The Dead Planet";
@@ -79,9 +80,19 @@ var Levels = Class.extend({
                 tileCount = levelWidth / tileWidth;
                 this.GetBossTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false)
         }
+        
+        var tardisPosition = {
+            type: "powerup",
+            powerUpType: "tardis",
+            x: levelWidth,
+            y: windowHeight - 307
+        };
+        
+        this.LevelTiles.push(tardisPosition);
+        this.LevelWidth = levelWidth;
     },
     GetLevelTiles: function(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, randomY){
-        var enemyX = windowWidth + tileWidth;
+        var enemyX = (windowWidth + tileWidth) - 600;
         var powerUpX = tileWidth;
         for(var i = 0; i < tileCount; i++){
             tileType = tileTypes[this.GetRandomInt(0, tileTypes.length - 1)];
@@ -127,21 +138,20 @@ var Levels = Class.extend({
         var levelTiles = this.LevelTiles;
         var bossX = levelWidth - (tileWidth * 2);
         var bossY = this.GetRandomInt(25, windowHeight - 175);
-        var tardisX = bossX + tileWidth;
         var bossPosition = {
             type: "boss",
             enemyType: enemyTypes[0],
             x: bossX,
             y: bossY
         };
-        this.LevelTiles.push(bossPosition);
-        var tardisPosition = {
-            type: "powerup",
-            powerUpType: "tardis",
-            x: tardisX,
-            y: windowHeight - 307
+        var doctorPosition = {
+            type: "doctor",
+            powerUpType: "doctor_1",
+            x: levelWidth - 200,
+            y: windowHeight - 175
         };
-        this.LevelTiles.push(tardisPosition);
+        this.LevelTiles.push(bossPosition);
+        this.LevelTiles.push(doctorPosition);
     },
     GetRandomInt: function(min, max) {
         var rand = Math.floor(Math.random() * (max - min + 1)) + min;

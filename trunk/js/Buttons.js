@@ -403,7 +403,7 @@ var Buttons = Class.extend({
                                 button.x = canvasMiddle - (button.width / 2);
                                 button.y = 35;
                                 
-                                if(health === 0){
+                                if(health <= 0){
                                     button.text = "You Were Exterminated!";
                                 }
                                 
@@ -417,10 +417,7 @@ var Buttons = Class.extend({
                                     
                                     //Reset Health for Restarting Level
                                     button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
-                                    gameObjManager.CurrentPlayer.health = 200;
-                                    gameObjManager.SavePlayer(gameObjManager.CurrentPlayer);
                                 } else {
-                                    ATD.Level += 1;
                                     button.level = new Levels(ATD.Level, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
                                     if(ATD.Level > gameObjManager.CurrentPlayer.level){
                                         //Set Current Player to Next Level

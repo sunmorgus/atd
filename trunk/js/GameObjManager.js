@@ -19,6 +19,7 @@ var GameObjManager = Class.extend({
         this.DefaultFont = "bold 2em monospace";
 		
         //Group Objects
+        this.Level = null;
         this.Group = "index";
         this.Buttons = [];
         
@@ -157,10 +158,10 @@ var GameObjManager = Class.extend({
         };
     },
     
-    NewEnemyShot: function(enemy, x){
+    NewEnemyShot: function(enemy){
         return {
             id: null,
-            x: x,
+            x: enemy.x - 50,
             y: enemy.y + 62,
             width: 50,
             height: 5,
@@ -214,6 +215,14 @@ var GameObjManager = Class.extend({
                         powerUp.startY = tile.y;
                         powerUp.y = tile.y;
                         levelObjects.push(powerUp);
+                        break;
+                    case "doctor":
+                        var doctor = new PowerUp(tile.powerUpType);
+                        doctor.startX = tile.x;
+                        doctor.x = tile.x;
+                        doctor.startY = tile.y;
+                        doctor.y = tile.y;
+                        levelObjects.push(doctor);
                         break;
                 }
             }

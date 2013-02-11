@@ -83,7 +83,7 @@ var Game = Class.extend({
     EnemyShoot: function(gameObjManager, enemy){
         if(enemy.frequency !== undefined && enemy.frequency !== null){
             if(this.EnemyShooting === false && this.EnemyShots.length < enemy.frequency){
-                this.EnemyShots.push(gameObjManager.NewEnemyShot(enemy, this.canvasWidth - 200));
+                this.EnemyShots.push(gameObjManager.NewEnemyShot(enemy));//this.canvasWidth - 200));
             }
         }
     },
@@ -98,6 +98,7 @@ var Game = Class.extend({
     SetDefaults: function(){
         //Level Objects
         this.LevelTitle = "";
+        this.EOL = false;
         //Background Objects
         this.ScrollPosition = this.canvasWidth + 1;
         this.Backgrounds = [];
@@ -180,6 +181,9 @@ var Game = Class.extend({
         context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         bbcontext.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         var nameInput = $('#nameInput').hide();
+        var tardis = $("#tardisFade");
+        //tardis.fadeTo(10, 1);
+        tardis.hide();
 	},
     DrawButtons : function(context, headerOnly, gameObjManager) {
         var buttonsObj = new Buttons();
@@ -222,10 +226,12 @@ var Game = Class.extend({
                 context.font = gameObjManager.DefaultFont;
                 context.fillStyle = "rgb(0,0,0)";
                 
-                //Draw Level Title
-                groupTitle = "Level: " + ATD.Level;
-                textSize = context.measureText(groupTitle);
-                context.fillText(groupTitle, this.canvasWidth / 2, 20);
+                if(group === "level"){
+                    //Draw Level Title
+                    groupTitle = "Level: " + ATD.Level;
+                    textSize = context.measureText(groupTitle);
+                    context.fillText(groupTitle, this.canvasWidth / 2, 20);
+                }
                 
                 //Draw Health Bar
                 var healthLabel = "Health: ";
@@ -251,7 +257,7 @@ var Game = Class.extend({
     DrawBackground: function(context, gameObjManager){        
         var backgrounds = this.Backgrounds;
         var len = backgrounds.length;
-        var width = backgrounds[(len - 1)].width0;
+        var width = gameObjManager.Level.LevelWidth;//backgrounds[(len - 1)].width0;
         var bgImg0 = new Image();
         var bgImg1 = new Image();
         var bgImg2 = new Image();
@@ -286,7 +292,7 @@ var Game = Class.extend({
             background.x2 = x2;
         }
 
-        this.ScrollPosition = backgrounds[0].x0 + width;
+        this.ScrollPosition = backgrounds[0].x0 - width;
     },
     DrawEol: function(context, bbcontext, alpha){
         context.fillStyle = "rgb(0,0,0)";
@@ -303,11 +309,22 @@ var Game = Class.extend({
         //var len = enemies.length;
         var canvasRight = this.canvasWidth;
         var hold = [];
+        var endLevelFunc = function(){
+                                ATD.Level += 1;
+                                this.DrawEndOfLevel(gameObjManager.Level); 
+                            };
+        var doctorSpeechFunc = function(){
+                                speech.hide();
+                                ATD.MainLoopInterval = setInterval(function (){
+                                    ATD.CurrentGame.DrawLevel(ATD.CurrentGame.GameObjManager.Level);
+                                }.bind(this), ATD.MilleInterval);
+                            };
         for(var i in enemies){
             var enemyImg = new Image();
             var enemy = enemies[i];
             var x = enemy.x;
             var y = enemy.y;
+            var enemyRight = enemy.width + x;
             if(enemy.ObjType === "enemy" || enemy.ObjType === "boss"){
                 if(enemy.hit === false){
                     enemyImg.src = enemy.imgSrc;
@@ -315,12 +332,15 @@ var Game = Class.extend({
                 else {
                     enemyImg.src = enemy.imgSrcInvert;
                 }
-                var enemyRight = enemy.width + x;
 
-                if(this.MoveLeft === true && (this.Fighting === false || (this.Fighting === true && enemyRight > canvasRight)) && 
+                if(this.MoveLeft === true && this.Moving === true &&
                     (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
                         x -= 12;
                         this.Moving = true;
+                }
+                
+                if(enemyRight < canvasRight){
+                    this.Moving = false;
                 }
                 
                 if(x < canvasRight){
@@ -367,10 +387,10 @@ var Game = Class.extend({
                 enemy.hitCount++;
             } else {
                 enemyImg.src = enemy.imgSrc;
-                if(this.MoveLeft === true && this.Fighting === false && 
+                if(this.MoveLeft === true && this.Fighting === false && this.EOL === false &&
                     (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
-                    this.Moving = true;
                     x -= 12;
+                    this.Moving = true;
                 }
                 
                 if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
@@ -378,9 +398,43 @@ var Game = Class.extend({
                     this.Moving = true;
                 }
                 
-                var hit = this.DetectPowerUpCollision(x, y, enemy.width, enemy.height, enemy.health);
+                if(enemy.type === "tardis"){
+                    if(enemyRight < canvasRight){
+                        this.EOL = true;
+                    }
+                }
+                
+                if(enemy.type === "doctor" && enemy.saved === true){
+                    x += 12;
+                    if(enemyRight >= canvasRight - 100){
+                       hold.push(enemy);
+                    }
+                }
+                
+                var hit = this.DetectPowerUpCollision(x, y, enemy.width, enemy.height, enemy.health, enemy.type);
                 if(hit === true){
-                    hold.push(enemy);
+                    switch(enemy.type){
+                        case "tardis":
+                            hold.push(enemy);
+                            setTimeout(endLevelFunc.bind(this), ATD.MilleInterval);
+                            break;
+                        case "doctor":
+                            clearInterval(ATD.MainLoopInterval);
+                            ATD.MainLoopInterval = null;
+                            enemy.saved = true;
+                            var speech = $('#speech');
+                            speech.html(enemy.message);
+                            var width = speech.width();
+                            var height = speech.outerHeight(true);
+                            speech.width(speech.outerWidth() / 2);
+                            speech.css({left: enemy.x - 40, top: (enemy.y - height) + 15});
+                            speech.show();
+                            setTimeout(doctorSpeechFunc.bind(this), enemy.speechTime);
+                            break;
+                        default:
+                            hold.push(enemy);
+                            break;
+                    }
                 }
             }
             
@@ -412,6 +466,11 @@ var Game = Class.extend({
             this.Moving = true;
         }
         
+        if(this.MoveLeft === true && this.EOL === true){
+            x += 12;
+            this.Moving = false;
+        }
+        
         if(this.MoveRight === true && (x >= currentPlayer.sprite.startX)){
             x -= 12;
             this.Moving = true;
@@ -426,8 +485,9 @@ var Game = Class.extend({
         if(this.MoveDown === true && y < currentPlayer.sprite.startY){
             y += 8;
         }
-        
+
         this.DrawImage(context, playerImg, currentPlayer.sprite.x, y, currentPlayer.sprite.width, currentPlayer.sprite.height);
+
         if(this.PlayerInvertCount === 6){
             this.PlayerHit = false;
             this.PlayerInvertCount = 0;
@@ -468,20 +528,15 @@ var Game = Class.extend({
     },
     DrawFight: function(context, gameObjManager){
         if(this.Fighting === true){
-            this.Moving = false;
             var enemies = this.Enemies;
-            //var elen = enemies.length;
-            //var canvasRight = this.canvasX + this.canvasWidth;
             for(var e in enemies){
                 var enemy = enemies[e];
                 if(enemy.fighting === true){
                     this.EnemyShoot(gameObjManager, enemy);
                     var shots = this.EnemyShots;
-                    //var len = shots.length;
                     var hold = [];
                     for(var i in shots){
                         this.EnemyShooting = true;
-                        //var shot = shots[i];
                         context.fillStyle = shots[i].fillStyle;
                         context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
     
@@ -542,29 +597,74 @@ var Game = Class.extend({
         
         return false;
     },
-    DetectPowerUpCollision: function(px, py, pwidth, pheight, health){
-        var left = px;
-        //var right = px + pwidth;
-        var top = py;
-        var bottom = py + pheight;
-        var currentPlayer = this.GameObjManager.CurrentPlayer;
-        if(left <= (currentPlayer.sprite.x + currentPlayer.sprite.width) && 
-            (
-                (top <= currentPlayer.sprite.y && bottom >= currentPlayer.sprite.y) || 
-                (top <= currentPlayer.sprite.y + currentPlayer.sprite.height && bottom >= currentPlayer.sprite.y + currentPlayer.sprite.height) || 
-                (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
-            )
-        ){
-            var currentHealth = this.GameObjManager.CurrentPlayer.health;
-            if(currentHealth < 200){
-                this.GameObjManager.CurrentPlayer.health += health;
+    DetectPowerUpCollision: function(px, py, pwidth, pheight, health, type){
+        var gameObjManager = this.GameObjManager;
+        if(gameObjManager.Group === "level"){
+            var left = px;
+            //var right = px + pwidth;
+            var top = py;
+            var bottom = py + pheight;
+            var currentPlayer = gameObjManager.CurrentPlayer;
+    
+            switch(type){
+                case "health":
+                    if(left <= (currentPlayer.sprite.x + currentPlayer.sprite.width) && 
+                        (
+                            (top <= currentPlayer.sprite.y && bottom >= currentPlayer.sprite.y) || 
+                            (top <= currentPlayer.sprite.y + currentPlayer.sprite.height && bottom >= currentPlayer.sprite.y + currentPlayer.sprite.height) || 
+                            (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
+                        )
+                    ){
+                        var currentHealth = gameObjManager.CurrentPlayer.health;
+                        if(currentHealth < 200){
+                            this.GameObjManager.CurrentPlayer.health += health;
+                        }
+                        return true;
+                    }
+                    break;
+                case "doctor":
+                    if(left <= (currentPlayer.sprite.x + currentPlayer.sprite.width) && 
+                        (
+                            (top <= currentPlayer.sprite.y && bottom >= currentPlayer.sprite.y) || 
+                            (top <= currentPlayer.sprite.y + currentPlayer.sprite.height && bottom >= currentPlayer.sprite.y + currentPlayer.sprite.height) || 
+                            (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
+                        )
+                    ){
+                        return true;
+                    }
+                    break;
+                case "tardis":
+                    if (left <= currentPlayer.sprite.x && bottom >= currentPlayer.sprite.y && top <= currentPlayer.sprite.y) {
+                        this.MoveLeft = false;
+                        return true;
+                    }
+                    break;
             }
-            return true;
+    
+            return false;
         }
-        return false;
     },
     ExplodeEnemy: function(enemy){
         
+    },
+    FadeTardis: function(context, gameObjManager){
+        ATD.Fading = true;
+        var tardis = $("#tardisFade");
+        var group = gameObjManager.Group;
+        switch(group){
+            case "sol":
+                tardis.css({left: gameObjManager.CurrentPlayer.sprite.x - 5, top: this.canvasHeight - 307});
+                tardis.fadeTo(1000, 0.5).fadeTo(1000, 0).fadeTo(1000, 0.8).fadeTo(1000, 0).fadeTo(1000, 1, function(){
+                    ATD.Fading = false;
+                }.bind(this));
+                break;
+            case "eol":
+                tardis.css({left: gameObjManager.CurrentPlayer.sprite.x - 17, top: this.canvasHeight - 307});
+                tardis.fadeTo(10, 1).fadeTo(1000, 0.8).fadeTo(1000, 1).fadeTo(1000, 0.5).fadeTo(1000, 1).fadeTo(1000, 0, function(){
+                    ATD.Fading = false;
+                }.bind(this));
+                break;
+        }
     },
     //
     //End Canvas Utility Methods
@@ -667,6 +767,7 @@ var Game = Class.extend({
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
         gameObjManager.Group = "sol";
+        gameObjManager.Level = level;
         gameObjManager.CurrentPlayer.sprite.x = 60;
         var context = this.context;
         var bbcontext = this.backBufferContext;
@@ -677,7 +778,11 @@ var Game = Class.extend({
         //Draw Header, Floor, Buttons
         this.DrawBackground(bbcontext, gameObjManager);
         this.DrawFloor(bbcontext, this.canvasWidth, null, gameObjManager);
-        this.DrawPlayer(bbcontext, gameObjManager);
+        
+        this.FadeTardis(bbcontext, gameObjManager);
+        
+        //this.DrawPlayer(bbcontext, gameObjManager);
+        this.DrawEnemies(bbcontext, gameObjManager);
         this.DrawEol(context, bbcontext, true);
         this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
         this.DrawButtons(bbcontext, false, gameObjManager);
@@ -692,19 +797,21 @@ var Game = Class.extend({
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
         gameObjManager.Group = "level";
+        gameObjManager.Level = level;
         var context = this.context;
         var bbcontext = this.backBufferContext;
         this.DestroyCanvas(context, bbcontext, false);
-        var scrollPosition = this.ScrollPosition;
-        var limit = this.canvasWidth; //480 * level.LevelNumber;
-        if(scrollPosition > limit && gameObjManager.CurrentPlayer.health > 0){            
+        //var scrollPosition = this.ScrollPosition;
+        //var limit = level.LevelWidth;//this.canvasWidth; //480 * level.LevelNumber;
+        //console.log("scrollPosition: " + scrollPosition + " limit: " + limit);
+        if(gameObjManager.CurrentPlayer.health > 0){            
             //Draw Header, Floor, and Buttons
             this.DrawBackground(bbcontext, gameObjManager);
+            this.DrawPlayer(bbcontext, gameObjManager);
             this.DrawEnemies(bbcontext, gameObjManager);
             this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
             this.DrawButtons(bbcontext, false, gameObjManager);
             this.DrawFloor(bbcontext, this.canvasWidth, null, gameObjManager);
-            this.DrawPlayer(bbcontext, gameObjManager);
             this.DrawShooting(bbcontext, gameObjManager);
             this.DrawFight(bbcontext, gameObjManager);
             
@@ -714,6 +821,7 @@ var Game = Class.extend({
             }
         } else {
             this.MoveLeft = false;
+            ATD.Level = level.LevelNumber;
             this.DrawEndOfLevel(level);
         }
     },
@@ -723,20 +831,26 @@ var Game = Class.extend({
         //Setup Canvas
         var gameObjManager = this.GameObjManager;
         gameObjManager.Group = "eol";
+        gameObjManager.Level = level;
         var context = this.context;
         var bbcontext = this.backBufferContext;
         this.DestroyCanvas(context, bbcontext, true);
         
+        if(gameObjManager.CurrentPlayer.health > 0){
+            $('#tardisFade').css({left: gameObjManager.CurrentPlayer.sprite.x - 17, top: this.canvasHeight - 307}).show();
+        }
+        
         //Draw Header, Floor, Buttons
         this.DrawBackground(bbcontext, gameObjManager);
         this.DrawFloor(bbcontext, this.canvasWidth, null, gameObjManager);
-        this.DrawPlayer(bbcontext, gameObjManager);
+        
+        //this.DrawPlayer(bbcontext, gameObjManager);
         this.DrawEol(context, bbcontext, true);
         this.DrawHeader(bbcontext, this.canvasWidth, gameObjManager);
         this.DrawButtons(bbcontext, false, gameObjManager);
         
         this.SetDefaults();
-        this.GameObjManager.CurrentPlayer.sprite.x = this.GameObjManager.CurrentPlayer.sprite.startX;
+        //this.GameObjManager.CurrentPlayer.sprite.x = this.GameObjManager.CurrentPlayer.sprite.startX;
         
         context.drawImage(this.backBuffer, 0, 0);
         

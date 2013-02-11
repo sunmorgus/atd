@@ -55,18 +55,20 @@
             <!-- Sprites -->
             <img src="images/sprites/player2.png" />
             <img src="images/sprites/player_invert.png" />
-            <img src="images/sprites/tardis.png" />
             <img src="images/sprites/enemies/gold.png" />
             <img src="images/sprites/enemies/gold_invert.png" />
             <img src="images/sprites/enemies/dalek-supreme.png" />
             <img src="images/sprites/enemies/dalek-supreme-invert.png" />
             <img src="images/sprites/powerups/ss.png" />
+            <!-- Doctors -->
+            <img src="images/sprites/doctors/doctor_1.png" />
             <!-- Backgrounds -->
             <img src="images/bg.jpg" />
             <img src="images/backgrounds/gameBg0.png" />
             <img src="images/backgrounds/gameBg1.png" />
             <img src="images/backgrounds/gameBg2.png" />
         </div>
+        <img id="tardisFade" src="images/sprites/tardis.png" style="display: none; position: fixed;" />
         <div id="nameInput" style="position: fixed; display: none; width: 300px;">
 			<label for="name" style="font: 1.5em monospace; color: white;">Enter your Name:</label>
 			<input id="name" class="ui-input-text ui-body-d ui-corner-all ui-shadow-inset" name="name" type="text" />
@@ -77,6 +79,7 @@
             <br />
             <h2>Loading...</h2>
         </div>
+        <p id="speech" class="triangle-border" style="display: none; position: fixed;"></p>
 		<div id="gameHolder"></div>
 	</body>
 </html>
