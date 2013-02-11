@@ -207,6 +207,14 @@ var GameObjManager = Class.extend({
                         boss.y = tile.y;
                         levelObjects.push(boss);
                         break;
+                    case "tardis":
+                        var powerUp = new PowerUp(tile.powerUpType);
+                        powerUp.startX = tile.x;
+                        powerUp.x = tile.x;
+                        powerUp.startY = tile.y;
+                        powerUp.y = tile.y;
+                        levelObjects.push(powerUp);
+                        break;
                 }
             }
         }

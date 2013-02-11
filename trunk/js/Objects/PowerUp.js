@@ -9,6 +9,12 @@ var PowerUp = GameObj.extend({
                 this.width = 75;
                 this.height = 75;
                 break;
+            case "tardis":
+                this.id = GUID();
+                this.imgSrc = "images/sprites/tardis.png";
+                this.width = 135;
+                this.height = 282;
+                break;
         }
     }
 });

@@ -127,6 +127,7 @@ var Levels = Class.extend({
         var levelTiles = this.LevelTiles;
         var bossX = levelWidth - (tileWidth * 2);
         var bossY = this.GetRandomInt(25, windowHeight - 175);
+        var tardisX = bossX + tileWidth;
         var bossPosition = {
             type: "boss",
             enemyType: enemyTypes[0],
@@ -134,6 +135,13 @@ var Levels = Class.extend({
             y: bossY
         };
         this.LevelTiles.push(bossPosition);
+        var tardisPosition = {
+            type: "powerup",
+            powerUpType: "tardis",
+            x: tardisX,
+            y: windowHeight - 307
+        };
+        this.LevelTiles.push(tardisPosition);
     },
     GetRandomInt: function(min, max) {
         var rand = Math.floor(Math.random() * (max - min + 1)) + min;
