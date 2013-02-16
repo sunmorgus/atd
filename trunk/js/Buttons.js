@@ -116,11 +116,50 @@ var Buttons = Class.extend({
                     }
                 ]
                 break;
+            case "requiredScore":
+                buttons = [
+                    {
+                        id: "requiredScore",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(0,0,0,.7)",
+                        text: "",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "yourScore",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(0,0,0,.7)",
+                        text: "",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    },
+                    {
+                        id: "rsOk",
+                        group: group,
+                        width: 200,
+                        height: 50,
+                        x: 0,
+                        y: 0,
+                        color: "rgba(255,0,0,.9)",
+                        text: "OK",
+                        textColor: "rgb(255,255,255)",
+                        font: gameObjManager.DefaultFont
+                    }
+                ]
+                break;
         }
         
         if(headerOnly === true){
-            return [
-                    //music on/off button
+            buttons = [
                     {
                         id: "music",
                         group: group,
@@ -132,7 +171,6 @@ var Buttons = Class.extend({
                         imgSrcOff: "images/buttons/music_off.png",
                         state: gameObjManager.Music
                     },
-                    //return home button
                     {
                         id: "home",
                         group: group,
@@ -140,12 +178,12 @@ var Buttons = Class.extend({
                         height: 25,
                         x: 0,
                         y: 0,
-                        imgSrc: "images/buttons/home.png",
+                        imgSrc: "images/buttons/home.png"
                     }
             ]
-        } else {
-            return buttons;
         }
+        
+        return buttons;
     },
     GetPlayerButtons: function(gameObjManager){
         var playerButtons = [];
@@ -180,7 +218,7 @@ var Buttons = Class.extend({
                     //color: "rgba(0,0,0,.9)",
                     color: "rgb(56,77,214)",
                     name: player.name,
-                    text: player.name + " | Level: " + player.level,
+                    text: player.name + " | Level: " + player.level + " | Score: " + player.score,
                     textColor: "rgb(255,255,255)",
                     font: gameObjManager.DefaultFont
                 }
@@ -194,21 +232,30 @@ var Buttons = Class.extend({
     },
     GetLevelButtons: function(gameObjManager, count, level){
         var levelButtons = [];
-        var buttonXPadding = 60;
-        var buttonYPadding = 40;
+        var windowWidth = gameObjManager.WindowWidth;
+        var windowHeight = gameObjManager.WindowHeight;
+        var buttonXPadding = 30;
+        var buttonYPadding = 10;
         var buttonWidth = 50;
         var buttonHeight = 50;
-        var x = 140;
+        var x = 30;
         var y = 35;
-        var row = 1;
-        var column = 1;
-        var columns = 6;
-        if(gameObjManager.WindowWidth < 1000){
-            columns = 4;
-        } else if(gameObjManager.WindowWidth < 500){
-            columns = 2;
+        if(windowHeight >= 510){
+            buttonYPadding = 20;
         }
-        for(var i = 1; i <= count; i++){
+        if(windowHeight >= 600){
+            buttonYPadding = 60;
+            y = 55;
+        }
+        
+        var totalButtonWidth = buttonWidth + buttonXPadding;
+        var columns = Math.floor(windowWidth / totalButtonWidth);
+        for (var i = 1; i <= count; i++){
+            if(i % (columns - 1) == 1 && i != 1){
+                //new row
+                y += buttonHeight + buttonYPadding;
+                x = 30;
+            }
             var locked = true;
             if(i <= level){
                 locked = false;
@@ -220,7 +267,7 @@ var Buttons = Class.extend({
                 height: buttonHeight,
                 x: x,
                 y: y,
-                color: "rgba(56,77,214,.9)",
+                color: i % 5 === 0 && locked === false ? "rgba(255,0,0,.9)" : "rgba(56,77,214,.9)",
                 text: i < 10 ? "0" + i : i,
                 textColor: "rgb(255,255,255)",
                 font: gameObjManager.DefaultFont,
@@ -230,15 +277,7 @@ var Buttons = Class.extend({
             }
             levelButtons.push(button);
             
-            if(column <= columns){
-                x += buttonWidth + buttonXPadding;
-                column++;
-            } else {
-                row++;
-                y += buttonHeight + buttonYPadding;
-                column = 1;
-                x = 140;
-            }
+            x += buttonWidth + buttonXPadding;
         }
         
         return levelButtons;
@@ -278,7 +317,7 @@ var Buttons = Class.extend({
                         if(button.imgSrc !== undefined && button.imgSrc !== null){
                             if(button.id === "player"){
                                 button.x = 60;
-                                button.y = canvasBottom - 175;
+                                button.y = canvasBottom - 150;
                                 this.DrawImageButton(context, button, false, false, DrawImage);
                             }
                             if(button.id === "title"){
@@ -370,7 +409,7 @@ var Buttons = Class.extend({
                     break;
                 case "levelSelect":
                     // Show Level Select
-                    var levelButtons = this.GetLevelButtons(gameObjManager, 44, gameObjManager.CurrentPlayer.level);
+                    var levelButtons = this.GetLevelButtons(gameObjManager, 55, gameObjManager.CurrentPlayer.level);
                     //len = levelButtons.length;
                     for(var i in levelButtons){
                         button = levelButtons[i];
@@ -392,6 +431,7 @@ var Buttons = Class.extend({
                         this.DrawTextButton(context, button);
                         buttons.push(button);
                     }
+                    break;
                 case "eol":
                     indexButtons = this.GetButtons(gameObjManager, false);
                     //len = indexButtons.length;
@@ -433,6 +473,36 @@ var Buttons = Class.extend({
                         buttons.push(button);
                     }
                     break;
+                case "requiredScore":
+                    indexButtons = this.GetButtons(gameObjManager, false);
+                    var score = gameObjManager.Level.RequiredScore;
+                    for(var i in indexButtons){
+                        button = indexButtons[i];
+                        var y = canvasVMiddle - (button.height * 2);
+                        switch(button.id){
+                            case "requiredScore":
+                                button.text = "A score of " + score + " is required to play level " + gameObjManager.Level.LevelNumber + "!";
+                                var textSize = context.measureText(button.text);
+                                button.width = textSize.width + 20;
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = y;
+                                break;
+                            case "yourScore":
+                                button.text = "Your score is only " + gameObjManager.CurrentPlayer.score + "!";
+                                var textSize = context.measureText(button.text);
+                                button.width = textSize.width + 20;
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = y + button.height + 10;
+                                break;
+                            case "rsOk":
+                                button.x = canvasMiddle - (button.width / 2);
+                                button.y = y + (button.height * 2) + 20;
+                                break;
+                        }
+                        
+                        this.DrawTextButton(context, button);
+                        buttons.push(button);
+                    }
             }
         }
         
@@ -509,7 +579,7 @@ var Buttons = Class.extend({
         var img = new Image();
         img.src = button.imgSrc;
         DrawImage(context, img, button.x, button.y, button.width, button.height);
-    },
+    }
 });
 var LabelButton = Class.extend({
     init: function(group, gameObjManager){

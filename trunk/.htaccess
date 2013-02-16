@@ -1,3 +1,6 @@
+AddType application/x-httpd-php .htm
+AddType application/x-httpd-php .html
+
 AuthType Basic
 AuthName "CSBC Paintball Development Site"
 AuthUserFile /etc/apache2/dav_svn.passwd

@@ -3,11 +3,11 @@ var Levels = Class.extend({
         this.LevelNumber = lvl;
         
         this.LevelTiles = [];
-        this.TileTypes = ["empty", "empty", "empty", "empty", "enemy", "enemy", "enemy", "powerup"];
+        this.TileTypes = ["empty", "empty", "empty", "enemy", "enemy", "enemy", "powerup", "powerup"];
     },    
     BuildLevel: function(windowWidth, windowHeight){
         var lvl = this.LevelNumber;
-        var levelWidth = lvl * (2382 / 2);
+        var levelWidth = 2382;
         var tileWidth = 200;
         var tileCount = levelWidth / tileWidth;
         var tileTypes = this.TileTypes;
@@ -17,10 +17,12 @@ var Levels = Class.extend({
                 this.LevelTitle = "The Dead Planet";
                 this.Grayscale = false;
                 this.BossLevel = false;
+                this.RequiredScore = 0;
                 
-                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
-                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
-                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                this.LevelBackground0 = 'images/backgrounds/Part01Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part01Bg1.png';
+                this.LevelBackground2 = 'images/backgrounds/Part01Bg2.png';
+                
                 var enemyTypes = ["gold"];
                 var powerUpTypes = ["health"];
                 this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
@@ -29,10 +31,11 @@ var Levels = Class.extend({
                 this.LevelTitle = "The Survivors";
                 this.Grayscale = false;
                 this.BossLevel = false;
+                this.RequiredScore = 200;
                 
-                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
-                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
-                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                this.LevelBackground0 = 'images/backgrounds/Part01Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part01Bg1.png';
+                this.LevelBackground2 = 'images/backgrounds/Part01Bg2.png';
                 
                 var enemyTypes = ["gold"];
                 var powerUpTypes = ["health"];
@@ -42,10 +45,11 @@ var Levels = Class.extend({
                 this.LevelTitle = "The Escape";
                 this.Grayscale = false;
                 this.BossLevel = false;
+                this.RequiredScore = 400;
                 
-                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
-                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
-                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                this.LevelBackground0 = 'images/backgrounds/Part01Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part01Bg1.png';
+                this.LevelBackground2 = 'images/backgrounds/Part01Bg2.png';
                 
                 var enemyTypes = ["gold"];
                 var powerUpTypes = ["health"];
@@ -55,10 +59,11 @@ var Levels = Class.extend({
                 this.LevelTitle = "The Ambush";
                 this.Grayscale = false;
                 this.BossLevel = false;
+                this.RequiredScore = 600;
                 
-                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
-                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
-                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                this.LevelBackground0 = 'images/backgrounds/Part01Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part01Bg1.png';
+                this.LevelBackground2 = 'images/backgrounds/Part01Bg2.png';
                 
                 var enemyTypes = ["gold"];
                 var powerUpTypes = ["health"];
@@ -68,24 +73,73 @@ var Levels = Class.extend({
                 this.LevelTitle = "Dalek Supreme!";
                 this.Grayscale = false;
                 this.BossLevel = true;
+                this.RequiredScore = 800;
                 
-                this.LevelBackground0 = 'images/backgrounds/gameBg0.png';
-                this.LevelBackground1 = 'images/backgrounds/gameBg1.png';
-                this.LevelBackground2 = 'images/backgrounds/gameBg2.png';
+                this.LevelBackground0 = 'images/backgrounds/Part01Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part01Bg1.png';
+                this.LevelBackground2 = 'images/backgrounds/Part01Bg2.png';
                 
                 var enemyTypes = ["dalek-supreme"];
                 var powerUpTypes = ["health"];
                 
-                levelWidth = 2382;
                 tileCount = levelWidth / tileWidth;
-                this.GetBossTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false)
+                this.GetBossTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
+                break;
+            case 6:
+                levelWidth *= 1.5;
+                this.LevelTitle = "The Power of the Daleks";
+                this.Grayscale = false;
+                this.BossLevel = false;
+                this.RequiredScore = 1000;
+                
+                this.LevelBackground0 = 'images/backgrounds/Part02Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part02Bg2.png';
+                this.LevelBackground2 = 'images/backgrounds/Part02Bg3.png';
+                //this.LevelBackground3 = 'images/backgrounds/Part02Bg3.png';
+                
+                var enemyTypes = ["gold", "green"];
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, true);
+                break;
+            case 7:
+                levelWidth *= 1.5;
+                this.LevelTitle = "The Evil of the Daleks";
+                this.Grayscale = false;
+                this.BossLevel = false;
+                this.RequiredScore = 1200;
+                
+                this.LevelBackground0 = 'images/backgrounds/Part02Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part02Bg2.png';
+                this.LevelBackground2 = 'images/backgrounds/Part02Bg3.png';
+                //this.LevelBackground3 = 'images/backgrounds/Part02Bg3.png';
+                
+                var enemyTypes = ["gold", "green"];
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, true);
+                break;
+            case 8:
+                levelWidth *= 1.5;
+                this.LevelTitle = "The Wheel in Space";
+                this.Grayscale = false;
+                this.BossLevel = false;
+                this.RequiredScore = 1400;
+                
+                this.LevelBackground0 = 'images/backgrounds/Part02Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part02Bg2.png';
+                this.LevelBackground2 = 'images/backgrounds/Part02Bg3.png';
+                //this.LevelBackground3 = 'images/backgrounds/Part02Bg3.png';
+                
+                var enemyTypes = ["gold", "green"];
+                var powerUpTypes = ["health"];
+                this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, true);
+                break;
         }
         
         var tardisPosition = {
             type: "powerup",
             powerUpType: "tardis",
             x: levelWidth,
-            y: windowHeight - 307
+            y: windowHeight - 282
         };
         
         this.LevelTiles.push(tardisPosition);
@@ -102,12 +156,13 @@ var Levels = Class.extend({
                     break;
                 case "enemy":
                     if(this.BossLevel === false){
+                        var enemyY = randomY === true ? this.GetRandomInt(25, windowHeight - 140) : windowHeight - 140;
                         if(enemyX < (levelWidth - 200)){
                             var enemyPosition = {
                                 type: tileType,
                                 enemyType: enemyTypes[this.GetRandomInt(0, enemyTypes.length - 1)],
                                 x: enemyX,
-                                y: windowHeight - 175
+                                y: enemyY
                             };
                             this.LevelTiles.push(enemyPosition);
                         } else {
@@ -121,7 +176,7 @@ var Levels = Class.extend({
                             type: tileType,
                             powerUpType: powerUpTypes[this.GetRandomInt(0, powerUpTypes.length - 1)],
                             x: powerUpX,
-                            y: this.GetRandomInt(25, windowHeight - 175)
+                            y: this.GetRandomInt(25, windowHeight - 150)
                         };
                         this.LevelTiles.push(powerUpPosition);
                     } else {
@@ -148,7 +203,7 @@ var Levels = Class.extend({
             type: "doctor",
             powerUpType: "doctor_1",
             x: levelWidth - 200,
-            y: windowHeight - 175
+            y: windowHeight - 150
         };
         this.LevelTiles.push(bossPosition);
         this.LevelTiles.push(doctorPosition);

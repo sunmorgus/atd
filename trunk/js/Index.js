@@ -14,7 +14,7 @@ $(window).load(function() {
         
         currentGame.DrawIndex();
         ATD.CurrentGame = currentGame;
-        $('#game-field').bind('click', function(e) {
+        $('#gameHolder').bind('click', function(e) {
             var currentGame = ATD.CurrentGame;
             var button = currentGame.ButtonClick(e.pageX, e.pageY);
             if (button !== false) {
@@ -50,6 +50,7 @@ $(window).load(function() {
                     case "nextLevel":
                         if(ATD.Fading === false){
                             if(currentGame.GameObjManager.CurrentPlayer.health > 0){
+                                currentGame.GameObjManager.SavePlayer(currentGame.GameObjManager.CurrentPlayer);
                                 currentGame.FadeTardis(currentGame, currentGame.GameObjManager);
                                 setTimeout(function(){
                                     StartLevel(button.level, currentGame);
@@ -59,14 +60,16 @@ $(window).load(function() {
                                 currentGame.GameObjManager.SavePlayer(currentGame.GameObjManager.CurrentPlayer);
                                 StartLevel(button.level, currentGame);
                             }
-                            break;
                         }
+                        break;
                     case "lvlButton": //level buttons
                         if(button.locked === false){
                             ATD.Level = button.level.LevelNumber;
                             StartLevel(button.level, currentGame);
                         }
                         break;
+                    case "rsOk":
+                        currentGame.DrawLevelSelect();
                 }
             }
         });
@@ -100,7 +103,6 @@ $(window).load(function() {
                 case 17: //ctrl
                 case 32:
                     e.preventDefault();
-                    //ATD.CurrentGame.Shoot();
                     ATD.CurrentGame.Shooting = false;
                     break;
                 case 39:
@@ -139,7 +141,8 @@ function SubmitNameTap(name) {
 function StartLevel(level, currentGame){
     var gameObjManager = currentGame.GameObjManager;
     level.BuildLevel(gameObjManager.WindowWidth, gameObjManager.WindowHeight);
-    if(level.LevelTiles.length > 1){
+    var score = gameObjManager.CurrentPlayer.score;
+    if(level.LevelTiles.length > 1 && score >= level.RequiredScore){
         currentGame.Backgrounds = gameObjManager.GetBackgrounds(level);
         currentGame.Enemies = gameObjManager.GetLevel(level);
         currentGame.PowerUps = gameObjManager.GetLevel(level);
@@ -150,7 +153,10 @@ function StartLevel(level, currentGame){
             }.bind(this), ATD.MilleInterval);
         }.bind(this), 5500);
     } else {
-        currentGame.DrawIndex();
+        currentGame.DrawLevelSelect();
+        if(score < level.RequiredScore){
+            currentGame.DrawRequiredScore(level);
+        }
     }
 }
 

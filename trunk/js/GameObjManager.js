@@ -1,8 +1,8 @@
 var GameObjManager = Class.extend({
 	init : function() {
         //Page Objects
-        var gameWidth = 1200;
-        var gameHeight = window.innerHeight;
+        var gameWidth = $(window).width();
+        var gameHeight = $(window).height();
         var scaleToFitX = gameWidth / 800;
         var scaleToFitY = gameHeight / 480;
         var currentScreenRatio = gameWidth / gameHeight;
@@ -11,11 +11,17 @@ var GameObjManager = Class.extend({
             this.WindowWidth = gameWidth;
             this.WindowHeight = gameHeight;
         } else {
-            this.WindowWidth = 800 * optimalRatio;
-            this.WindowHeight = 480 * optimalRatio;
+            var width = 800 * optimalRatio;
+            var height = 480 * optimalRatio;
+            
+            if(width < 800 || height < 480){
+                this.WindowWidth = 800;
+                this.WindowHeight = 480;
+            } else {
+                this.WindowWidth = 800 * optimalRatio;
+                this.WindowHeight = 480 * optimalRatio;
+            }            
         }
-		//this.WindowWidth = 800;
-		//this.WindowHeight = 480;
         this.DefaultFont = "bold 2em monospace";
 		
         //Group Objects
@@ -24,7 +30,7 @@ var GameObjManager = Class.extend({
         this.Buttons = [];
         
         //Player Info
-		this.PlayerVersion = 4;
+		this.PlayerVersion = 7;
 		this.CurrentPlayer = {};
         
         //Audio Objects
@@ -74,7 +80,7 @@ var GameObjManager = Class.extend({
             player = this.NewPlayer(name);
             players.push(player);
         }
-        player.sprite.y = this.WindowHeight - 175;
+        player.sprite.y = this.WindowHeight - 150;
         player.sprite.startY = player.sprite.y;
 		this.CurrentPlayer = player;
 		this.SetOption("players", JSON.stringify(players));
@@ -89,17 +95,20 @@ var GameObjManager = Class.extend({
 			score : 0,
 			level : 1,
 			health : 200,
+            score: 0,
 			sprite : {
                 imgSrc: "images/sprites/player2.png",
+                imgSrcRight: "images/sprites/player2-right.png",
                 imgSrcInvert: "images/sprites/player_invert.png",
+                imgSrcRightInvert: "images/sprites/player2-right_invert.png",
                 width: 125,
                 height: 150,
                 startX: 60,
-                startY: this.WindowHeight - 175,
+                startY: this.WindowHeight - 150,
                 x: 60,
-                y: this.WindowHeight - 175
+                y: this.WindowHeight - 150
             },
-			version : 4
+			version : 7
 		}
 
 		return player;
@@ -115,8 +124,21 @@ var GameObjManager = Class.extend({
                 case 4: //added startx
                     player.sprite.startX = 60;
                     break;
+                case 5: //removed floor
+                    player.sprite.startY = this.WindowHeight - 150;
+                    player.sprite.y = this.WindowHeight - 150;
+                    break;
+                case 6: //added score
+                    player.score = 0;
+                    break;
+                case 7: //added right facing images
+                    player.sprite.imgSrcRight = "images/sprites/player2-right.png";
+                    player.sprite.imgSrcRightInvert = "images/sprites/player2-right_invert.png";
+                    break;
             }
         }
+        
+        player.version = playerVersion;
         return player;
     },
     
@@ -161,8 +183,8 @@ var GameObjManager = Class.extend({
     NewEnemyShot: function(enemy){
         return {
             id: null,
-            x: enemy.x - 50,
-            y: enemy.y + 62,
+            x: enemy.x - 40,
+            y: enemy.y + 52,
             width: 50,
             height: 5,
             fillStyle: "rgb(0,255,255)",
@@ -242,4 +264,4 @@ var GameObjManager = Class.extend({
 	//
 	//End Storage Methods
 	//
-})
+});

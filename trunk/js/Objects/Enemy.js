@@ -4,13 +4,21 @@ var Enemy = GameObj.extend({
         switch(type){
             case "gold":
                 this.health = 50;
+                this.startHealth = 50;
                 this.damage = 10;
                 this.frequency = 1;
                 this.shotspeed = 25;
                 this.imgSrc = "images/sprites/enemies/gold.png";
                 this.imgSrcInvert = "images/sprites/enemies/gold_invert.png";
                 break;
-            case "army":
+            case "green":
+                this.health = 80;
+                this.startHealth = 80;
+                this.damage = 12;
+                this.frequency = 1;
+                this.shotspeed = 25;
+                this.imgSrc = "images/sprites/enemies/green.png";
+                this.imgSrcInvert = "images/sprites/enemies/green_invert.png";
                 break;
             case "white":
                 break;
@@ -22,10 +30,11 @@ var Enemy = GameObj.extend({
                 break;
         }
         this.width = 125;
-        this.height = 150;
+        this.height = 140;
         this.hit = false;
         this.hitCount = 0;
         this.fighting = false;
+        this.shots = [];
     }
 });
 var Boss = GameObj.extend({
@@ -34,8 +43,9 @@ var Boss = GameObj.extend({
         switch(type){
             case "dalek-supreme":
                 this.health = 150;
+                this.startHealth = 150;
                 this.damage = 20;
-                this.frequency = 1;
+                this.frequency = 2;
                 this.shotspeed = 35;
                 this.imgSrc = "images/sprites/enemies/dalek-supreme.png";
                 this.imgSrcInvert = "images/sprites/enemies/dalek-supreme-invert.png";
@@ -48,5 +58,6 @@ var Boss = GameObj.extend({
         this.fighting = false;
         this.moveUp = true;
         this.moveDown = false;
+        this.shots = [];
     }
 });
