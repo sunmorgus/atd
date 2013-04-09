@@ -30,7 +30,7 @@ var GameObjManager = Class.extend({
         this.Buttons = [];
         
         //Player Info
-		this.PlayerVersion = 7;
+		this.PlayerVersion = 8;
 		this.CurrentPlayer = {};
         
         //Audio Objects
@@ -106,9 +106,10 @@ var GameObjManager = Class.extend({
                 startX: 60,
                 startY: this.WindowHeight - 150,
                 x: 60,
-                y: this.WindowHeight - 150
+                y: this.WindowHeight - 150,
+                dir: 'right'
             },
-			version : 7
+			version : 8
 		}
 
 		return player;
@@ -134,6 +135,9 @@ var GameObjManager = Class.extend({
                 case 7: //added right facing images
                     player.sprite.imgSrcRight = "images/sprites/player2-right.png";
                     player.sprite.imgSrcRightInvert = "images/sprites/player2-right_invert.png";
+                    break;
+                case 8: //added player dir
+                    player.sprite.dir = 'right';
                     break;
             }
         }
@@ -168,22 +172,24 @@ var GameObjManager = Class.extend({
     },
     
     NewShot: function(){
+        var currentPlayerSprite = this.CurrentPlayer.sprite;
         return {
             id: null,
-            x: this.CurrentPlayer.sprite.x + this.CurrentPlayer.sprite.width,
+            x: currentPlayerSprite.dir === 'right' ? currentPlayerSprite.x + currentPlayerSprite.width : currentPlayerSprite.x - 50,
             y: this.CurrentPlayer.sprite.y + 62,
             width: 50,
             height: 5,
             fillStyle: "rgb(0,255,255)",
             damage: 10,
-            speed: 100
+            speed: 100,
+            dir: currentPlayerSprite.dir
         };
     },
     
     NewEnemyShot: function(enemy){
         return {
             id: null,
-            x: enemy.x - 40,
+            x: enemy.dir === 'left' ? enemy.x - 40 : enemy.x + enemy.width,
             y: enemy.y + 52,
             width: 50,
             height: 5,

@@ -230,7 +230,7 @@ var Buttons = Class.extend({
         
         return playerButtons;
     },
-    GetLevelButtons: function(gameObjManager, count, level){
+    GetLevelButtons: function(gameObjManager, count, currentPlayer){
         var levelButtons = [];
         var windowWidth = gameObjManager.WindowWidth;
         var windowHeight = gameObjManager.WindowHeight;
@@ -256,8 +256,11 @@ var Buttons = Class.extend({
                 y += buttonHeight + buttonYPadding;
                 x = 30;
             }
+            
+            var level = new Levels(i, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
+            
             var locked = true;
-            if(i <= level){
+            if(i <= currentPlayer.level){
                 locked = false;
             }
             var button = {
@@ -273,7 +276,7 @@ var Buttons = Class.extend({
                 font: gameObjManager.DefaultFont,
                 imgSrc: "images/buttons/lock.png",
                 locked: locked,
-                level: new Levels(i, gameObjManager.WindowHeight, gameObjManager.WindowWidth)
+                level: level
             }
             levelButtons.push(button);
             
@@ -409,7 +412,7 @@ var Buttons = Class.extend({
                     break;
                 case "levelSelect":
                     // Show Level Select
-                    var levelButtons = this.GetLevelButtons(gameObjManager, 55, gameObjManager.CurrentPlayer.level);
+                    var levelButtons = this.GetLevelButtons(gameObjManager, 55, gameObjManager.CurrentPlayer);
                     //len = levelButtons.length;
                     for(var i in levelButtons){
                         button = levelButtons[i];

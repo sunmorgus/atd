@@ -83,10 +83,12 @@ $(window).load(function() {
                 case 39:
                     e.preventDefault();
                     ATD.CurrentGame.MoveLeft = true;
+                    ATD.CurrentGame.GameObjManager.CurrentPlayer.sprite.dir = 'right';
                     break;
                 case 37:
                     e.preventDefault();
                     ATD.CurrentGame.MoveRight = true;
+                    ATD.CurrentGame.GameObjManager.CurrentPlayer.sprite.dir = 'left';
                     break;
                 case 38: //up
                     e.preventDefault();
@@ -140,9 +142,8 @@ function SubmitNameTap(name) {
 
 function StartLevel(level, currentGame){
     var gameObjManager = currentGame.GameObjManager;
-    level.BuildLevel(gameObjManager.WindowWidth, gameObjManager.WindowHeight);
     var score = gameObjManager.CurrentPlayer.score;
-    if(level.LevelTiles.length > 1 && score >= level.RequiredScore){
+    if(level.LevelTiles.length > 1){
         currentGame.Backgrounds = gameObjManager.GetBackgrounds(level);
         currentGame.Enemies = gameObjManager.GetLevel(level);
         currentGame.PowerUps = gameObjManager.GetLevel(level);

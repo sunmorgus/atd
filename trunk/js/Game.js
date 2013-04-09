@@ -273,7 +273,7 @@ var Game = Class.extend({
             var x1 = background.x1;
             var x2 = background.x2;
             if(this.MoveLeft === true && this.Moving === true && 
-                (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
+                (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 160){
                 x0 -= 6;
                 x1 -= 9;
                 x2 -= 12;
@@ -329,21 +329,30 @@ var Game = Class.extend({
             var enemyRight = enemy.width + x;
             if(enemy.ObjType === "enemy" || enemy.ObjType === "boss"){
                 if(enemy.hit === false){
-                    enemyImg.src = enemy.imgSrc;
+                    if(gameObjManager.CurrentPlayer.sprite.x < x){
+                        enemyImg.src = enemy.imgSrc;
+                        enemy.dir = 'left';
+                    } else {
+                        enemyImg.src = enemy.imgSrcRight;
+                        enemy.dir = 'right';
+                    }
                 }
                 else {
-                    enemyImg.src = enemy.imgSrcInvert;
+                    if(gameObjManager.CurrentPlayer.sprite.x < x){
+                        enemyImg.src = enemy.imgSrcInvert;
+                    } else {
+                        enemyImg.src = enemy.imgSrcInvertRight;
+                    }
                 }
 
                 if(this.MoveLeft === true && this.Moving === true &&
-                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 160){
                         x -= 12;
                         this.Moving = true;
                 }
                 
                 if(x < canvasRight){
                     enemy.fighting = true;
-                    //this.Fighting = true;
                 }
                 
                 if(this.MoveRight === true && x < enemy.startX && gameObjManager.CurrentPlayer.sprite.x <= 60){
@@ -353,16 +362,17 @@ var Game = Class.extend({
                         enemy.fighting = false;
                     }
                 }
-
+                var hit = this.DetectPowerUpCollision(x, y, enemy.width, enemy.height, enemy.health, enemy.ObjType);
+                if(hit === true){
+                    this.Moving = false;
+                }
+                
                 if(enemy.ObjType === "boss"){
-                    if(enemyRight < canvasRight){
-                        this.Moving = false;
-                    }
                     var top = 25;
-                    var bottom = this.canvasHeight - 25;                    
+                    var bottom = this.canvasHeight;                    
                     var enemyBottom = y + enemy.height;
                     if(y >= top && enemy.moveUp === true){
-                        y -= 8;
+                        y -= 12;
                         enemy.moveUp = true;
                         enemy.moveDown = false;
                     } else {
@@ -371,7 +381,7 @@ var Game = Class.extend({
                     }
                     
                     if(y <= top || (y >= top && enemyBottom <= bottom && enemy.moveDown === true)){
-                        y += 8;
+                        y += 12;
                         enemy.moveUp = false;
                         enemy.moveDown = true;
                     } else {
@@ -388,7 +398,7 @@ var Game = Class.extend({
             } else {
                 enemyImg.src = enemy.imgSrc;
                 if(this.MoveLeft === true && this.Moving === true && this.EOL === false &&
-                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 100){
+                    (gameObjManager.CurrentPlayer.sprite.x + gameObjManager.CurrentPlayer.sprite.width) >= this.canvasMiddle - 160){
                     x -= 12;
                     this.Moving = true;
                 }
@@ -424,10 +434,9 @@ var Game = Class.extend({
                             enemy.saved = true;
                             var speech = $('#speech');
                             speech.html(enemy.message);
-                            var width = speech.width();
                             var height = speech.outerHeight(true);
-                            speech.width(speech.outerWidth() / 2);
-                            speech.css({left: enemy.x - 40, top: (enemy.y - height) + 15});
+                            speech.width(speech.outerWidth() / 3);
+                            speech.css({left: enemy.x - 50, top: (enemy.y - height) + 15});
                             speech.show();
                             setTimeout(doctorSpeechFunc.bind(this), enemy.speechTime);
                             break;
@@ -465,19 +474,15 @@ var Game = Class.extend({
         var moveLeft = this.MoveLeft;
         var moveRight = this.MoveRight;
         if(this.PlayerHit === false){
-            if((moveLeft === true && moveRight === false) || 
-               (moveLeft === false && moveRight === false) || 
-               (moveLeft === true && moveRight === true)){
+            if(currentPlayer.sprite.dir === 'right'){
                 playerImg.src = currentPlayer.sprite.imgSrc;
-            } else if((moveLeft === false && moveRight === true))  {
+            } else  {
                 playerImg.src = currentPlayer.sprite.imgSrcRight;
             }
         } else {            
-            if((moveLeft === true && moveRight === false) || 
-               (moveLeft === false && moveRight === false) || 
-               (moveLeft === true && moveRight === true)){
+            if(currentPlayer.sprite.dir === 'right'){
                 playerImg.src = currentPlayer.sprite.imgSrcInvert;
-            } else if((moveLeft === false && moveRight === true))  {
+            } else {
                 playerImg.src = currentPlayer.sprite.imgSrcRightInvert;
             }
         }
@@ -487,6 +492,7 @@ var Game = Class.extend({
         if(this.MoveLeft === true && (x + currentPlayer.sprite.width) <= this.canvasMiddle - 100){
             x += 12;
             this.Moving = true;
+            this.EOL = false;
         }
         
         if(this.MoveLeft === true && this.EOL === true){
@@ -521,61 +527,86 @@ var Game = Class.extend({
         gameObjManager.CurrentPlayer.sprite.y = y;
     },
     DrawShooting: function(context, gameObjManager){
-        var shots = this.Shots;
-        if(this.Shooting === true){
-            this.Shoot();
-        }
+        var currentPlayerSprite = gameObjManager.CurrentPlayer.sprite;
+        //var shots = this.Shots;
         var hold = [];
+        this.Shoot();
+        var shots = this.Shots;
         for(var i in shots){
             context.fillStyle = shots[i].fillStyle;
             context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
             var prevI = i - 1;
             if(prevI !== -1){
-                if(shots[prevI].x - shots[i].speed > shots[i].x + shots[i].width){
-                    shots[i].x += 25;
+                if(shots[i].dir === 'right'){
+                    if(shots[prevI].x - shots[i].speed > shots[i].x + shots[i].width){
+                        shots[i].x += 25;
+                    } else {
+                        hold.push(shots[i]);
+                    }
                 } else {
-                    hold.push(shots[i]);
+                    if((shots[prevI].x + shots[prevI].width) + shots[i].speed < shots[i].x){
+                        shots[i].x -= 25;
+                    } else {
+                        hold.push(shots[i]);
+                    }
                 }
             } else {
-                shots[i].x += 25;
+                if(shots[i].dir === 'right'){
+                    shots[i].x += 25;
+                } else {
+                    shots[i].x -= 25;
+                }
             }
 
             var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, true, shots[i].damage);
-            if(shots[i].x >= this.canvasMiddle * 2 || hit === true){
+            var offScreenBool = shots[i].x >= this.canvasMiddle * 2;
+            if(shots[i].dir === 'left'){
+                offScreenBool = (shots[i].x + shots[i].width) <= this.canvasX;
+            }
+            if(offScreenBool === true || hit === true){
                 hold.push(shots[i]);
             }
         }
+        
+        this.Shots = shots;
+        
         for(var c in hold){
             this.Shots.splice($.inArray(hold[c], this.Shots), 1);
         }
     },
     DrawFight: function(context, gameObjManager){
-        //if(this.Fighting === true){
-            var enemies = this.Enemies;
-            for(var e in enemies){
-                var enemy = enemies[e];
-                if(enemy.fighting === true){
-                    this.EnemyShoot(gameObjManager, enemy);
-                    var shots = enemy.shots;
-                    var hold = [];
-                    for(var i in shots){
-                        this.EnemyShooting = true;
-                        context.fillStyle = shots[i].fillStyle;
-                        context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
-    
-                        var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, false, shots[i].damage);
+        var enemies = this.Enemies;
+        for(var e in enemies){
+            var enemy = enemies[e];
+            if(enemy.fighting === true){
+                this.EnemyShoot(gameObjManager, enemy);
+                var shots = enemy.shots;
+                var hold = [];
+                for(var i in shots){
+                    this.EnemyShooting = true;
+                    context.fillStyle = shots[i].fillStyle;
+                    context.fillRect(shots[i].x, shots[i].y, shots[i].width, shots[i].height);
+
+                    var hit = this.DetectCollision(shots[i].x, shots[i].y, shots[i].width, shots[i].height, false, shots[i].damage);
+                    if(enemy.dir === 'left'){
                         shots[i].x -= enemy.shotspeed;
                         if((shots[i].x + shots[i].width) <= this.canvasX / 10 || hit === true){
                             hold.push(shots[i]);
                         }
+                    } else {
+                        var canvasRight = this.canvasX + this.canvasWidth;
+                        shots[i].x += enemy.shotspeed;
+                        if(shots[i].x >= canvasRight || hit === true){
+                            hold.push(shots[i]);
+                        }
                     }
-                    for(var c in hold){
-                        enemy.shots.splice($.inArray(hold[c], enemy.shots), 1);
-                    }
-                    this.EnemyShooting = false;
                 }
+                for(var c in hold){
+                    enemy.shots.splice($.inArray(hold[c], enemy.shots), 1);
+                }
+                this.EnemyShooting = false;
             }
-        //}
+        }
     },
     DetectCollision: function(x, y, width, height, isPlayer, damage){
         var left = x;
@@ -590,7 +621,11 @@ var Game = Class.extend({
             for(var ei in enemies){
                 var enemy = enemies[ei];
                 if(enemy.ObjType === "enemy" || enemy.ObjType === "boss"){
-                    if(right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height){
+                    var hitBool = right >= enemy.x && top >= enemy.y && bottom <= enemy.y + enemy.height;
+                    if(enemy.dir === 'right'){
+                        hitBool = left <= enemy.x + enemy.width && top >= enemy.y && bottom <= enemy.y + enemy.height;
+                    }
+                    if(hitBool === true){
                         enemy.health -= damage;
                         enemy.hit = true;
                         if(enemy.health <= 0){
@@ -652,9 +687,24 @@ var Game = Class.extend({
                         } else {
                             currentHealth += health;
                         }
-                        //if(currentHealth < 200){
-                            this.GameObjManager.CurrentPlayer.health = currentHealth;
-                        //}
+                        
+                        this.GameObjManager.CurrentPlayer.health = currentHealth;
+                        
+                        var currentScore = gameObjManager.CurrentPlayer.score;
+                        currentScore += health;
+                        this.GameObjManager.CurrentPlayer.score = currentScore;
+                        return true;
+                    }
+                    break;
+                case "enemy":
+                case "boss":
+                    if(left <= (currentPlayer.sprite.x + currentPlayer.sprite.width) && 
+                        (
+                            (top <= currentPlayer.sprite.y && bottom >= currentPlayer.sprite.y) || 
+                            (top <= currentPlayer.sprite.y + currentPlayer.sprite.height && bottom >= currentPlayer.sprite.y + currentPlayer.sprite.height) || 
+                            (top >= currentPlayer.sprite.y && bottom <= currentPlayer.sprite.y + currentPlayer.sprite.height)
+                        )
+                    ){
                         return true;
                     }
                     break;
