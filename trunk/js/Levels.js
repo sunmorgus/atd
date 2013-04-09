@@ -164,9 +164,6 @@ var Levels = Class.extend({
                 this.LevelBackground1 = 'images/backgrounds/Part03Bg1.png';
                 this.LevelBackground2 = 'images/backgrounds/Part03Bg2.png';
                 
-                var enemyTypes = ["dalek-sec"];
-                var powerUpTypes = ["health"];
-                
                 var enemyTypes = ["gold", "green"];
                 var powerUpTypes = ["health"];
                 this.GetLevelTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, true);
