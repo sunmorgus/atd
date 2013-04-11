@@ -160,9 +160,13 @@ var Levels = Class.extend({
                 this.Grayscale = false;
                 this.BossLevel = false;
                 
-                this.LevelBackground0 = 'images/backgrounds/Part03Bg0.png';
-                this.LevelBackground1 = 'images/backgrounds/Part03Bg1.png';
-                this.LevelBackground2 = 'images/backgrounds/Part03Bg2.png';
+                // this.LevelBackground0 = 'images/backgrounds/Part03Bg0.png';
+                // this.LevelBackground1 = 'images/backgrounds/Part03Bg1.png';
+                // this.LevelBackground2 = 'images/backgrounds/Part03Bg2.png';
+                
+                this.LevelBackground0 = 'images/backgrounds/Part02Bg0.png';
+                this.LevelBackground1 = 'images/backgrounds/Part02Bg2.png';
+                this.LevelBackground2 = 'images/backgrounds/Part02Bg3.png';
                 
                 var enemyTypes = ["gold", "green"];
                 var powerUpTypes = ["health"];
