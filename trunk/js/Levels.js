@@ -155,7 +155,7 @@ var Levels = Class.extend({
                 this.GetBossTiles(windowWidth, tileWidth, tileCount, tileTypes, levelWidth, enemyTypes, powerUpTypes, windowHeight, false);
                 break;
             case 11:
-                levelWidth *= 1.5;
+                levelWidth *= 2;
                 this.LevelTitle = "Day of the Daleks";
                 this.Grayscale = false;
                 this.BossLevel = false;
