@@ -260,7 +260,7 @@ var Buttons = Class.extend({
             var level = new Levels(i, gameObjManager.WindowHeight, gameObjManager.WindowWidth);
             
             var locked = true;
-            if(i <= currentPlayer.level){
+            if(i <= currentPlayer.level || debug === true){
                 locked = false;
             }
             var button = {
